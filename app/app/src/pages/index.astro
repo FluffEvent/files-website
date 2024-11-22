@@ -1,24 +1,66 @@
 ---
+import { getCollection, getEntry } from 'astro:content'
 import Layout from '~/layouts/Layout.astro'
 
 import { i18nFactory } from '~/i18n'
 const _ = i18nFactory(Astro.currentLocale as any)
+
+const documents = await getCollection('documents')
 ---
 
 <Layout>
 
-	<p>
-		<span class="icon icon-[mdi--hand-wave] icon-align icon-fw"></span>
-		{_({
-			en: 'Welcome!',
-			fr: 'Bienvenue !',
-		})}
-	</p>
+	<div class="main">
+
+		<p>
+			<span class="icon icon-[mdi--hand-wave] icon-align icon-fw"></span>
+			{_({
+				en: 'Welcome!',
+				fr: 'Bienvenue !',
+			})}
+		</p>
+
+		<p>
+			{_({
+				en: 'See association documents:',
+				fr: 'Voir les documents de l\'association :',
+			})}
+		</p>
+
+		<ul>
+			{documents.map(({ slug }) => (
+				<li>
+					<a href={`/${slug}`}>{slug}</a>
+				</li>
+			))}
+		</ul>
+
+	</div>
 
 </Layout>
 
 <style lang="scss">
+.main {
+	@apply m-2 border-l-2 border-gray-300 px-6 py-4;
+}
+
+*:last-child {
+	@apply mb-0;
+}
+
 p {
-	@apply m-4;
+	@apply mb-2;
+}
+
+ul {
+	@apply list-disc list-inside;
+
+	li {
+		@apply mb-2 pl-2;
+	}
+
+	a {
+		@apply text-blue-500 hover:text-blue-700 hover:underline;
+	}
 }
 </style>
