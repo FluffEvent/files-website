@@ -12,10 +12,10 @@ export interface Site
 }
 
 export const site: Site = {
-	title: 'Astro Template',
+	title: 'Fluff Event Documents',
 	description: {
-		'en': 'Template project for an Astro web application',
-		'fr': 'Modèle de projet pour une application web Astro',
+		'en': 'Fluff Event association documents render in printable web pages.',
+		'fr': 'Documents de l\'association Fluff Event rendus en pages web imprimables.',
 	},
 	author: 'Matiboux',
 	themeColor: '#ffffff',

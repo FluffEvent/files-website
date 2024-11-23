@@ -1,5 +1,5 @@
 {
-  "name": "astro-template",
+  "name": "fluffevent-association-documents-site",
   "author": "Matiboux",
   "license": "MIT",
   "version": "0.0.1",
@@ -16,12 +16,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/matiboux/astro-template.git"
+    "url": "git+https://github.com/FluffEvent/association-documents-site.git"
   },
   "bugs": {
-    "url": "https://github.com/matiboux/astro-template/issues"
+    "url": "https://github.com/FluffEvent/association-documents-site/issues"
   },
-  "homepage": "https://github.com/matiboux/astro-template#readme",
+  "homepage": "https://github.com/FluffEvent/association-documents-site#readme",
   "dependencies": {
     "@astrojs/tailwind": "^5.1.2",
     "@fontsource-variable/noto-serif": "^5.1.0",
