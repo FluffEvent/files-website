@@ -5,6 +5,8 @@ import Layout from '~/layouts/Layout.astro'
 
 import logosrc from '~/assets/logo.png?url'
 
+import '@fontsource-variable/noto-serif'
+
 export async function getStaticPaths()
 {
 	const blogEntries = await getCollection('documents');
@@ -119,7 +121,7 @@ function splitHash(hash: string)
 		padding-bottom: 36.7mm;
 		@apply border border-solid border-gray-300;
 		@apply shadow-lg;
-		@apply -z-20;
+		font-family: 'Noto Serif Variable', 'Georgia', serif;
 
 		@media print {
 			@apply bg-inherit w-full m-0 p-0;
@@ -208,6 +210,15 @@ function splitHash(hash: string)
 
 		@media print {
 			@apply m-0 border-0;
+		}
+	}
+
+	:global(blockquote) {
+		@apply mb-4 pl-4 pt-2 pb-4;
+		@apply border-l-2 border-gray-300;
+
+		> :global(*:last-child) {
+			@apply mb-0;
 		}
 	}
 
