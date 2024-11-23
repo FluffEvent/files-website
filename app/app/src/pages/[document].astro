@@ -23,13 +23,13 @@ export async function getStaticPaths()
 }
 
 const { entry } = Astro.props
-const { Content } = await (entry as any).render()
+const { Content, headings } = await (entry as any).render()
 
 function splitHash(hash: string)
 {
-	const numParts = 2
+	const numParts = Math.max(1, Math.min(4, Math.floor(hash.length / 4)))
 	// Divide the hash into `numParts` equal parts
-	const partMinLength = Math.ceil(hash.length / numParts)
+	const partMinLength = Math.floor(hash.length / numParts)
 	const extraLength = hash.length % numParts
 	const parts = []
 	for (let i = 0, startIndex = 0; i < numParts; ++i)
@@ -42,7 +42,7 @@ function splitHash(hash: string)
 }
 ---
 
-<Layout>
+<Layout title={headings[0].text}>
 
 	<div class="main">
 		<div class="content-wrapper">
@@ -53,14 +53,19 @@ function splitHash(hash: string)
 				</div> -->
 				<img src={logosrc} alt="FluffEvent logo" />
 				<div class="overlay">
-					<!-- <p class="version">
-						#{process.env.GITHUB_SHA || '36a1fd09cd8fac8c0b0410bda6fe5cdc4f0a079a'}
-					</p> -->
 					<p class="version">
-						<Fragment set:html={splitHash(process.env.GITHUB_SHA || '36a1fd09cd8fac8c0b0410bda6fe5cdc4f0a079a').join('<br />')} />
+						<Fragment set:html={splitHash(import.meta.env.GITHUB_SHA || 'dev').join('<br />')} />
 					</p>
 				</div>
 			</div>
+
+			{!import.meta.env.GITHUB_SHA && (
+				<div class="content-watermark">
+					<p class="specimen">
+						SPECIMEN
+					</p>
+				</div>
+			)}
 
 			<!-- Table hack for print layout -->
 			<!-- https://medium.com/@Idan_Co/the-ultimate-print-html-template-with-header-footer-568f415f6d2a -->
@@ -157,6 +162,21 @@ function splitHash(hash: string)
 
 			@media print {
 				height: calc(6rem + 19mm - 13.2mm);
+			}
+		}
+
+		.content-watermark {
+			@apply hidden;
+			@apply opacity-20;
+
+			@media print {
+				@apply fixed inset-0 flex justify-center items-center;
+			}
+
+			.specimen {
+				@apply text-9xl text-center font-bold text-red-500;
+				// Rotate 45 degrees
+				transform: rotate(-45deg);
 			}
 		}
 	}
