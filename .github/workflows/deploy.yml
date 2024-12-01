@@ -5,10 +5,7 @@ on:
   # Run on push on production branches
   push:
     branches:
-      - master
       - main
-      - prod
-      - production
     paths:
       - '.github/workflows/deploy.yml'
       - 'app/**'
@@ -33,7 +30,7 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
 
     steps:
 
@@ -45,13 +42,25 @@ jobs:
           GITHUB_REPOSITORY_URL: https://github.com/${{ github.repository }}
           GITHUB_SHA: ${{ github.sha }}
           BUILD_CHECK: "false" # Skip type checks
-        run: docker compose -f docker-compose.yml -f docker-compose.cicd.yml build
+        run: |
+          # docker compose build
+          docker compose \
+            -f docker-compose.yml -f docker-compose.cicd.yml \
+            --env-file .env \
+            build
 
       - name: Copy application files
-        run: docker compose -f docker-compose.yml -f docker-compose.cicd.yml up
+        run: |
+          # docker compose up
+          docker compose \
+            -f docker-compose.yml -f docker-compose.cicd.yml \
+            --env-file .env \
+            up
 
       - name: Chown dist folder to $USER
-        run: sudo chown -R $USER:$USER ./app/dist
+        run: |
+          # chown $USER ./app/dist
+          sudo chown -R $USER:$USER ./app/dist
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
@@ -62,7 +71,7 @@ jobs:
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
 
     # Job dependencies
     needs:
