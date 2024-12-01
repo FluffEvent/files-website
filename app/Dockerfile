@@ -52,24 +52,6 @@ RUN --mount=type=bind,source=./app/package.json,target=./package.json \
 # Copy application source code
 COPY --link ./app .
 
-# Download FluffEvent association documents
-RUN --mount=type=cache,target=/var/cache/apt \
-	--mount=type=cache,target=/var/lib/apt \
-	apt-get update && \
-	apt-get install -y wget && \
-	wget 'https://raw.githubusercontent.com/FluffEvent/association-documents/refs/heads/main/R%C3%A8glement%20int%C3%A9rieur.md' \
-		-O /tmp/reglement-interieur.md \
-		&& \
-	wget 'https://raw.githubusercontent.com/FluffEvent/association-documents/refs/heads/main/Statuts.md' \
-		-O /tmp/statuts.md \
-		&& \
-	mkdir -p ./src/content/documents && \
-	mv /tmp/reglement-interieur.md ./src/content/documents/ && \
-	mv /tmp/statuts.md ./src/content/documents/ && \
-	rm -rf /tmp/reglement-interieur.md && \
-	rm -rf /tmp/statuts.md && \
-	apt-get remove -y wget
-
 
 # --
 # Dev image

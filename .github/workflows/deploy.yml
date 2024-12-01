@@ -37,6 +37,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Download FluffEvent association documents
+        run: |
+          # download-documents.sh ./app/app
+          sh ./cicd/download-documents.sh ./app/app
+
       - name: Build for production
         env:
           GITHUB_REPOSITORY_URL: https://github.com/${{ github.repository }}
