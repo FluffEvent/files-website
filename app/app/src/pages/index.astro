@@ -6,6 +6,13 @@ import { i18nFactory } from '~/i18n'
 const _ = i18nFactory(Astro.currentLocale as any)
 
 const documents = await getCollection('documents')
+
+function getTitleFromBody(body: string): string | undefined
+{
+	// Get text from heading 1 in markdown body
+	const match = body.match(/^#\s+(.*)$/m)
+	return match ? match[1] : undefined
+}
 ---
 
 <Layout>
@@ -20,20 +27,32 @@ const documents = await getCollection('documents')
 			})}
 		</p>
 
-		<p>
-			{_({
-				en: 'See association documents:',
-				fr: 'Voir les documents de l\'association :',
-			})}
-		</p>
+		{documents.length > 0
+			? (
+				<p>
+					{_({
+						en: 'See association documents:',
+						fr: 'Voir les documents de l\'association :',
+					})}
+				</p>
 
-		<ul>
-			{documents.map((document) => (
-				<li>
-					<a href={`/document/${document.slug}`}>{document.slug}</a>
-				</li>
-			))}
-		</ul>
+				<ul>
+					{documents.map((document) => (
+						<li>
+							<a href={`/documents/${document.slug}`}>{getTitleFromBody(document.body) || document.slug}</a>
+						</li>
+					))}
+				</ul>
+			)
+			: (
+				<p>
+					{_({
+						en: 'No documents available.',
+						fr: 'Aucun document disponible.',
+					})}
+				</p>
+			)
+		}
 
 	</div>
 
