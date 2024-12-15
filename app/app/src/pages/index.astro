@@ -24,8 +24,8 @@ function getTitleFromBody(body: string): string | undefined
 		<img src={logosrc} alt="Logo" />
 		<h1>
 			{_({
-				en: 'Fluff Event Association Documents',
 				fr: 'Documents de l\'association Fluff Event',
+				en: 'Fluff Event Association Documents',
 			})}
 		</h1>
 	</div>
@@ -35,8 +35,8 @@ function getTitleFromBody(body: string): string | undefined
 		<p>
 			<span class="icon icon-[mdi--hand-wave] icon-align icon-fw"></span>
 			{_({
-				en: 'Welcome!',
 				fr: 'Bienvenue !',
+				en: 'Welcome!',
 			})}
 		</p>
 
@@ -44,8 +44,8 @@ function getTitleFromBody(body: string): string | undefined
 			? (
 				<p>
 					{_({
+						fr: 'Consulter les documents de l\'association :',
 						en: 'See association documents:',
-						fr: 'Voir les documents de l\'association :',
 					})}
 				</p>
 
@@ -60,8 +60,8 @@ function getTitleFromBody(body: string): string | undefined
 			: (
 				<p>
 					{_({
-						en: 'No documents available.',
 						fr: 'Aucun document disponible.',
+						en: 'No documents available.',
 					})}
 				</p>
 			)
@@ -70,8 +70,8 @@ function getTitleFromBody(body: string): string | undefined
 		{privateDocuments.length > 0 && (
 			<p>
 				{_({
+					fr: 'Consulter les documents privés de l\'association :',
 					en: 'See association private documents:',
-					fr: 'Voir les documents privés de l\'association :',
 				})}
 			</p>
 
