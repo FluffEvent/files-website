@@ -6,6 +6,7 @@ import { i18nFactory } from '~/i18n'
 const _ = i18nFactory(Astro.currentLocale as any)
 
 const documents = await getCollection('documents')
+const privateDocuments = await getCollection('private-documents')
 
 function getTitleFromBody(body: string): string | undefined
 {
@@ -53,6 +54,23 @@ function getTitleFromBody(body: string): string | undefined
 				</p>
 			)
 		}
+
+		{privateDocuments.length > 0 && (
+			<p>
+				{_({
+					en: 'See association private documents:',
+					fr: 'Voir les documents privés de l\'association :',
+				})}
+			</p>
+
+			<ul>
+				{privateDocuments.map((document) => (
+					<li>
+						<a href={`/private-documents/${document.slug}`}>{getTitleFromBody(document.body) || document.slug}</a>
+					</li>
+				))}
+			</ul>
+		)}
 
 	</div>
 

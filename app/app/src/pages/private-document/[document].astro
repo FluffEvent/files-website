@@ -1,0 +1,34 @@
+---
+import { getCollection } from 'astro:content'
+
+import Layout from '~/layouts/Layout.astro'
+import RenderDocument from '~/components/RenderDocument.astro'
+
+import '@fontsource-variable/noto-serif'
+
+export async function getStaticPaths()
+{
+	const blogEntries = await getCollection('documents');
+	return blogEntries.map((entry: any) =>
+		({
+			params: {
+				document: entry.slug,
+			},
+			props: {
+				entry,
+			},
+		})
+	)
+}
+
+const { entry } = Astro.props
+const { Content, headings } = await (entry as any).render()
+---
+
+<Layout title={headings[0].text}>
+
+	<RenderDocument>
+		<Content />
+	</RenderDocument>
+
+</Layout>
