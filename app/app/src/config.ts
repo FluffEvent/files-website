@@ -2,7 +2,7 @@ import type { AstroUserConfig } from 'astro/config'
 
 export const i18n =
 {
-	defaultLocale: 'en',
+	defaultLocale: 'fr',
 	locales: [
 		{
 			codes: ['en', 'en-US'],

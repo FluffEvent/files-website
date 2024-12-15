@@ -2,50 +2,116 @@
 import { getCollection, getEntry } from 'astro:content'
 import Layout from '~/layouts/Layout.astro'
 
+import logosrc from '~/assets/logo.png?url'
+
 import { i18nFactory } from '~/i18n'
 const _ = i18nFactory(Astro.currentLocale as any)
 
 const documents = await getCollection('documents')
+const privateDocuments = await getCollection('private-documents')
+
+function getTitleFromBody(body: string): string | undefined
+{
+	// Get text from heading 1 in markdown body
+	const match = body.match(/^#\s+(.*)$/m)
+	return match ? match[1] : undefined
+}
 ---
 
 <Layout>
+
+	<div class="header">
+		<img src={logosrc} alt="Logo" />
+		<h1>
+			{_({
+				fr: 'Documents de l\'association Fluff Event',
+				en: 'Fluff Event Association Documents',
+			})}
+		</h1>
+	</div>
 
 	<div class="main">
 
 		<p>
 			<span class="icon icon-[mdi--hand-wave] icon-align icon-fw"></span>
 			{_({
-				en: 'Welcome!',
 				fr: 'Bienvenue !',
+				en: 'Welcome!',
 			})}
 		</p>
 
-		<p>
-			{_({
-				en: 'See association documents:',
-				fr: 'Voir les documents de l\'association :',
-			})}
-		</p>
+		{documents.length > 0
+			? (
+				<p>
+					{_({
+						fr: 'Consulter les documents de l\'association :',
+						en: 'See association documents:',
+					})}
+				</p>
 
-		<ul>
-			{documents.map(({ slug }) => (
-				<li>
-					<a href={`/${slug}`}>{slug}</a>
-				</li>
-			))}
-		</ul>
+				<ul>
+					{documents.map((document) => (
+						<li>
+							<a href={`/documents/${document.slug}`}>{getTitleFromBody(document.body) || document.slug}</a>
+						</li>
+					))}
+				</ul>
+			)
+			: (
+				<p>
+					{_({
+						fr: 'Aucun document disponible.',
+						en: 'No documents available.',
+					})}
+				</p>
+			)
+		}
+
+		{privateDocuments.length > 0 && (
+			<p>
+				{_({
+					fr: 'Consulter les documents privés de l\'association :',
+					en: 'See association private documents:',
+				})}
+			</p>
+
+			<ul>
+				{privateDocuments.map((document) => (
+					<li>
+						<a href={`/private-documents/${document.slug}`}>{getTitleFromBody(document.body) || document.slug}</a>
+					</li>
+				))}
+			</ul>
+		)}
 
 	</div>
 
 </Layout>
 
 <style lang="scss">
-.main {
-	@apply m-2 border-l-2 border-gray-300 px-6 py-4;
+:global(body) {
+	@apply p-6;
+}
+
+.header, .main {
+	@apply mb-8;
+}
+
+.header {
+	@apply flex items-center gap-4;
 }
 
 *:last-child {
 	@apply mb-0;
+}
+
+h1 {
+	@apply text-2xl font-bold;
+}
+
+
+.header img {
+	@apply max-h-12;
 }
 
 p {

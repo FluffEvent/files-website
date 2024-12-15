@@ -1,29 +1,5 @@
 ---
-import { getCollection } from 'astro:content'
-
-import Layout from '~/layouts/Layout.astro'
-
 import logosrc from '~/assets/logo.png?url'
-
-import '@fontsource-variable/noto-serif'
-
-export async function getStaticPaths()
-{
-	const blogEntries = await getCollection('documents');
-	return blogEntries.map((entry: any) =>
-		({
-			params: {
-				document: entry.slug,
-			},
-			props: {
-				entry,
-			},
-		})
-	)
-}
-
-const { entry } = Astro.props
-const { Content, headings } = await (entry as any).render()
 
 function splitHash(hash: string)
 {
@@ -42,66 +18,59 @@ function splitHash(hash: string)
 }
 ---
 
-<Layout title={headings[0].text}>
+<div class="main">
+	<div class="content-wrapper">
 
-	<div class="main">
-		<div class="content-wrapper">
+		<div class="content-header">
+			<!-- <div class="side">
+				&nbsp;
+			</div> -->
+			<img src={logosrc} alt="FluffEvent logo" />
+			<div class="overlay">
+				<p class="version">
+					<Fragment set:html={splitHash(import.meta.env.GITHUB_SHA || 'dev').join('<br />')} />
+				</p>
+			</div>
+		</div>
 
-			<div class="content-header">
-				<!-- <div class="side">
-					&nbsp;
-				</div> -->
-				<img src={logosrc} alt="FluffEvent logo" />
-				<div class="overlay">
-					<p class="version">
-						<Fragment set:html={splitHash(import.meta.env.GITHUB_SHA || 'dev').join('<br />')} />
-					</p>
-				</div>
+		{!import.meta.env.GITHUB_SHA && (
+			<div class="content-watermark">
+				<p class="specimen">
+					SPECIMEN
+				</p>
+			</div>
+		)}
+
+		<!-- Table hack for print layout -->
+		<!-- https://medium.com/@Idan_Co/the-ultimate-print-html-template-with-header-footer-568f415f6d2a -->
+		<table>
+		<thead><tr><td>
+
+			<div class="header-space">
+				&nbsp;
 			</div>
 
-			{!import.meta.env.GITHUB_SHA && (
-				<div class="content-watermark">
-					<p class="specimen">
-						SPECIMEN
-					</p>
-				</div>
-			)}
+		</td></tr></thead>
+		<tbody><tr><td>
 
-			<!-- Table hack for print layout -->
-			<!-- https://medium.com/@Idan_Co/the-ultimate-print-html-template-with-header-footer-568f415f6d2a -->
-			<table>
-			<thead><tr><td>
+			<div class="content-body">
+				<slot /> <!-- Rendered content -->
+			</div>
 
-				<div class="header-space">
-					&nbsp;
-				</div>
+		</td></tr></tbody>
+		<tfoot><tr><td>
 
-			</td></tr></thead>
-			<tbody><tr><td>
+			<div class="footer-space">
+				&nbsp;
+			</div>
 
-				<div class="content-body">
-					<Content />
-				</div>
+		</td></tr></tfoot>
+		</table>
 
-			</td></tr></tbody>
-			<tfoot><tr><td>
-
-				<div class="footer-space">
-					&nbsp;
-				</div>
-
-			</td></tr></tfoot>
-			</table>
-
-		</div>
 	</div>
-
-</Layout>
+</div>
 
 <style lang="scss" is:global>
-@media print {
-}
-
 @page {
 	size: A4;
 	margin-top: 13.2mm; // Instead of 19mm for the header
@@ -206,12 +175,6 @@ function splitHash(hash: string)
 
 		+ :global(h1), + :global(h2), + :global(h3), + :global(h4) {
 			@apply mt-8;
-		}
-	}
-
-	:global(p) {
-		+ :global(ul), + :global(ol) {
-			@apply -mt-4;
 		}
 	}
 
