@@ -28,9 +28,9 @@ const documents = await getCollection('documents')
 		</p>
 
 		<ul>
-			{documents.map(({ slug }) => (
+			{documents.map((document) => (
 				<li>
-					<a href={`/${slug}`}>{slug}</a>
+					<a href={`/document/${document.slug}`}>{document.slug}</a>
 				</li>
 			))}
 		</ul>
