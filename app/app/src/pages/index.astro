@@ -2,6 +2,8 @@
 import { getCollection, getEntry } from 'astro:content'
 import Layout from '~/layouts/Layout.astro'
 
+import logosrc from '~/assets/logo.png?url'
+
 import { i18nFactory } from '~/i18n'
 const _ = i18nFactory(Astro.currentLocale as any)
 
@@ -17,6 +19,16 @@ function getTitleFromBody(body: string): string | undefined
 ---
 
 <Layout>
+
+	<div class="header">
+		<img src={logosrc} alt="Logo" />
+		<h1>
+			{_({
+				en: 'Fluff Event Association Documents',
+				fr: 'Documents de l\'association Fluff Event',
+			})}
+		</h1>
+	</div>
 
 	<div class="main">
 
@@ -77,12 +89,29 @@ function getTitleFromBody(body: string): string | undefined
 </Layout>
 
 <style lang="scss">
-.main {
-	@apply m-2 border-l-2 border-gray-300 px-6 py-4;
+:global(body) {
+	@apply p-6;
+}
+
+.header, .main {
+	@apply mb-8;
+}
+
+.header {
+	@apply flex items-center gap-4;
 }
 
 *:last-child {
 	@apply mb-0;
+}
+
+h1 {
+	@apply text-2xl font-bold;
+}
+
+
+.header img {
+	@apply max-h-12;
 }
 
 p {
