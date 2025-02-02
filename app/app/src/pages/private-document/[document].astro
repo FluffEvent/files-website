@@ -8,7 +8,7 @@ import '@fontsource-variable/noto-serif'
 
 export async function getStaticPaths()
 {
-	const blogEntries = await getCollection('documents');
+	const blogEntries = await getCollection('private-documents');
 	return blogEntries.map((entry: any) =>
 		({
 			params: {
