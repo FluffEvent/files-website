@@ -16,6 +16,9 @@ function splitHash(hash: string)
 	}
 	return parts
 }
+
+const data = Astro.props.data || {}
+const version = data.version || import.meta.env.GITHUB_SHA || 'dev'
 ---
 
 <div class="main">
@@ -28,12 +31,12 @@ function splitHash(hash: string)
 			<img src={logosrc} alt="FluffEvent logo" />
 			<div class="overlay">
 				<p class="version">
-					<Fragment set:html={splitHash(import.meta.env.GITHUB_SHA || 'dev').join('<br />')} />
+					<Fragment set:html={splitHash(version).join('<br />')} />
 				</p>
 			</div>
 		</div>
 
-		{!import.meta.env.GITHUB_SHA && (
+		{version === 'dev' && (
 			<div class="content-watermark">
 				<p class="specimen">
 					SPECIMEN
