@@ -61,4 +61,7 @@ for FILE_INPUT in $FILES; do
 	# Remove downloaded file
 	rm "/tmp/$FILE_DESTINATION"
 
+	# Transform file
+	"$(dirname "$0")/transform-document.sh" "$DIR/src/content/private-documents/$FILE_DESTINATION"
+
 done
