@@ -209,7 +209,24 @@ const version = data.version || import.meta.env.GITHUB_SHA || 'dev'
 	}
 
 	:global(table) {
-		@apply w-full;
+		@apply w-full border-collapse;
+
+		:global(td) {
+			@apply bg-clip-padding;
+			@apply border-0 border-transparent;
+		}
+
+		:global(thead th) {
+			@apply font-semibold align-bottom;
+		}
+
+		:global(thead + tbody tr > td), :global(tr + tr > td) {
+			@apply border-t-[1rem];
+		}
+
+		:global(tr > td + td) {
+			@apply border-l-[0.5rem];
+		}
 	}
 
 	:global(div.text-center) {
@@ -233,7 +250,7 @@ const version = data.version || import.meta.env.GITHUB_SHA || 'dev'
 	}
 
 	:global(.signature) {
-		@apply mt-4 p-2 max-w-[80%];
+		@apply p-2 max-w-[80%];
 		@apply border-b border-l border-gray-300 rounded-bl-lg;
 
 		:global(.faded-text) {
