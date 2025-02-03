@@ -13,8 +13,8 @@ if [ ! -d "$DIR" ]; then
 	exit 1
 fi
 
-
-BASE_URL='https://raw.githubusercontent.com/FluffEvent/association-private-documents/refs/heads/main'
+REPO='FluffEvent/association-private-documents'
+BASE_URL="https://raw.githubusercontent.com/$REPO/refs/heads/main"
 
 # List files to download
 FILES=$(cat <<EOF
@@ -35,7 +35,7 @@ for FILE_INPUT in $FILES; do
 
 	# Get the latest commit hash for the file
 	COMMIT_HASH=$(
-		curl -fsSL "https://api.github.com/repos/FluffEvent/association-private-documents/commits/main?path=$FILE_PATH" \
+		curl -fsSL "https://api.github.com/repos/$REPO/commits/main?path=$FILE_PATH" \
 			-H "Authorization: Bearer $(gh auth token)" \
 		| jq -r '.sha'
 	)

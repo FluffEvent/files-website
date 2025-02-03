@@ -14,7 +14,8 @@ if [ ! -d "$DIR" ]; then
 fi
 
 
-BASE_URL='https://raw.githubusercontent.com/FluffEvent/association-documents/refs/heads/main'
+REPO='FluffEvent/association-documents'
+BASE_URL="https://raw.githubusercontent.com/$REPO/refs/heads/main"
 
 # List files to download
 FILES=$(cat <<EOF
@@ -35,7 +36,7 @@ for FILE_INPUT in $FILES; do
 
 	# Get the latest commit hash for the file
 	COMMIT_HASH=$(
-		curl -fsSL "https://api.github.com/repos/FluffEvent/association-documents/commits/main?path=$FILE_PATH" \
+		curl -fsSL "https://api.github.com/repos/$REPO/commits/main?path=$FILE_PATH" \
 		| jq -r '.sha'
 	)
 
