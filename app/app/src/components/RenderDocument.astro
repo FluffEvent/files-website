@@ -22,6 +22,7 @@ const version = data.version || import.meta.env.GITHUB_SHA || 'dev'
 ---
 
 <div class="main">
+
 	<div class="content-wrapper">
 
 		<div class="content-header">
@@ -44,33 +45,20 @@ const version = data.version || import.meta.env.GITHUB_SHA || 'dev'
 			</div>
 		)}
 
-		<!-- Table hack for print layout -->
-		<!-- https://medium.com/@Idan_Co/the-ultimate-print-html-template-with-header-footer-568f415f6d2a -->
-		<table>
-		<thead><tr><td>
+		<div class="content-body">
+			<slot /> <!-- Rendered content -->
+		</div>
 
-			<div class="header-space">
-				&nbsp;
+		<div class="content-footer two-columns">
+			<div class="left">
 			</div>
-
-		</td></tr></thead>
-		<tbody><tr><td>
-
-			<div class="content-body">
-				<slot /> <!-- Rendered content -->
+			<div class="right">
+				<p>Page <span class="page-number">00</span> / <span class="page-count">00</span></p>
 			</div>
-
-		</td></tr></tbody>
-		<tfoot><tr><td>
-
-			<div class="footer-space">
-				&nbsp;
-			</div>
-
-		</td></tr></tfoot>
-		</table>
+		</div>
 
 	</div>
+
 </div>
 
 <style lang="scss" is:global>
@@ -85,10 +73,10 @@ const version = data.version || import.meta.env.GITHUB_SHA || 'dev'
 
 <style lang="scss">
 .main {
-	@apply flex justify-center;
+	@apply flex flex-col justify-start items-center;
 
 	.content-wrapper {
-		@apply relative;
+		@apply relative flex flex-col;
 		@apply bg-white;
 		width: 210mm;
 		@apply m-8 mb-16;
@@ -100,19 +88,20 @@ const version = data.version || import.meta.env.GITHUB_SHA || 'dev'
 		@apply shadow-lg;
 		font-family: 'Noto Serif Variable', 'Georgia', serif;
 
+		&.print-sized {
+			height: 297mm;
+		}
+
 		@media print {
-			@apply bg-inherit w-full m-0 p-0;
+			@apply bg-inherit w-full m-0;
 			@apply border-0 shadow-none;
 		}
 
 		.content-header {
-			@apply relative flex justify-center items-end w-full h-24;
+			@apply relative flex justify-center items-end;
+			@apply w-full h-24;
 			margin-top: calc(13.2mm - 19mm);
 			margin-bottom: calc(19mm - 13.2mm);
-
-			@media print {
-				@apply fixed top-0 my-0;
-			}
 
 			.overlay {
 				@apply absolute inset-0 flex justify-center items-center;
@@ -129,26 +118,39 @@ const version = data.version || import.meta.env.GITHUB_SHA || 'dev'
 			}
 		}
 
-		.header-space {
-			@apply h-0;
-
-			@media print {
-				height: calc(6rem + 19mm - 13.2mm);
-			}
-		}
-
 		.content-watermark {
 			@apply hidden;
 			@apply opacity-20;
 
 			@media print {
-				@apply fixed inset-0 flex justify-center items-center;
+				@apply absolute inset-0 flex justify-center items-center;
 			}
 
 			.specimen {
 				@apply text-9xl text-center font-bold text-red-500;
 				// Rotate 45 degrees
 				transform: rotate(-45deg);
+			}
+		}
+
+		.content-body {
+			@apply flex-grow;
+		}
+
+		.content-footer {
+			@apply flex justify-between items-start gap-4;
+			@apply mt-8;
+			margin-top: calc(19mm - 13.2mm);
+			margin-bottom: calc(13.2mm - 19mm);
+
+			.left, .right {
+				@apply flex flex-col justify-center items-start;
+				@apply flex-grow;
+				flex-basis: 100%;
+			}
+
+			.right {
+				@apply items-end;
 			}
 		}
 	}
@@ -257,6 +259,10 @@ const version = data.version || import.meta.env.GITHUB_SHA || 'dev'
 			@apply text-gray-500 text-sm;
 		}
 	}
+}
+
+*:last-child {
+	margin-bottom: 0 !important;
 }
 </style>
 
