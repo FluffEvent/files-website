@@ -209,11 +209,48 @@ const version = data.version || import.meta.env.GITHUB_SHA || 'dev'
 	}
 
 	:global(table) {
-		@apply w-full;
+		@apply w-full border-collapse;
+
+		:global(td) {
+			@apply bg-clip-padding;
+			@apply border-0 border-transparent;
+		}
+
+		:global(thead th) {
+			@apply font-semibold align-bottom;
+		}
+
+		:global(thead + tbody tr > td), :global(tr + tr > td) {
+			@apply border-t-[1rem];
+		}
+
+		:global(tr > td + td) {
+			@apply border-l-[0.5rem];
+		}
+	}
+
+	:global(div.text-center) {
+		@apply mb-6;
+	}
+
+	:global(span.input-line) {
+		@apply relative inline-block;
+		@apply w-1/4 mx-1;
+
+		&::before {
+			@apply absolute block;
+			@apply w-full mt-0.5;
+			@apply border-b border-gray-400 border-dashed;
+			content: '';
+		}
+
+		&:global(.input-line-long), &:global(.input-line-long) {
+			@apply w-full;
+		}
 	}
 
 	:global(.signature) {
-		@apply mt-4 p-2 max-w-[80%];
+		@apply p-2 max-w-[80%];
 		@apply border-b border-l border-gray-300 rounded-bl-lg;
 
 		:global(.faded-text) {

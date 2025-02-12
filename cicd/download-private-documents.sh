@@ -13,14 +13,13 @@ if [ ! -d "$DIR" ]; then
 	exit 1
 fi
 
-
-REPO='FluffEvent/association-documents'
+REPO='FluffEvent/association-private-documents'
 BASE_URL="https://raw.githubusercontent.com/$REPO/refs/heads/main"
 
 # List files to download
 FILES=$(cat <<EOF
-R%C3%A8glement%20Int%C3%A9rieur.md|reglement-interieur.md
-Statuts.md|statuts.md
+Contrats/Contrat%20cession%20droits%20auteur%20EN.md|contrat-cession-droits-auteur-en.md
+Contrats/Contrat%20cession%20droits%20auteur%20FR.md|contrat-cession-droits-auteur-fr.md
 EOF
 )
 
@@ -37,30 +36,32 @@ for FILE_INPUT in $FILES; do
 	# Get the latest commit hash for the file
 	COMMIT_HASH=$(
 		curl -fsSL "https://api.github.com/repos/$REPO/commits/main?path=$FILE_PATH" \
+			-H "Authorization: Bearer $(gh auth token)" \
 		| jq -r '.sha'
 	)
 
 	# Download file
 	curl -fsSL "$BASE_URL/$FILE_PATH" \
+		-H "Authorization: Bearer $(gh auth token)" \
 		-o "/tmp/$FILE_DESTINATION"
 
 	# Create destination file
-	mkdir -p "$DIR/src/content/documents"
-	touch "$DIR/src/content/documents/$FILE_DESTINATION"
+	mkdir -p "$DIR/src/content/private-documents"
+	touch "$DIR/src/content/private-documents/$FILE_DESTINATION"
 
 	# Append front matter to destination file
-	echo '---' > "$DIR/src/content/documents/$FILE_DESTINATION"
-	echo 'version: "'"$COMMIT_HASH"'"' >> "$DIR/src/content/documents/$FILE_DESTINATION"
-	echo '---' >> "$DIR/src/content/documents/$FILE_DESTINATION"
+	echo '---' > "$DIR/src/content/private-documents/$FILE_DESTINATION"
+	echo 'version: "'"$COMMIT_HASH"'"' >> "$DIR/src/content/private-documents/$FILE_DESTINATION"
+	echo '---' >> "$DIR/src/content/private-documents/$FILE_DESTINATION"
 
 	# Append downloaded file content to destination file
-	echo '' >> "$DIR/src/content/documents/$FILE_DESTINATION"
-	cat "/tmp/$FILE_DESTINATION" >> "$DIR/src/content/documents/$FILE_DESTINATION"
+	echo '' >> "$DIR/src/content/private-documents/$FILE_DESTINATION"
+	cat "/tmp/$FILE_DESTINATION" >> "$DIR/src/content/private-documents/$FILE_DESTINATION"
 
 	# Remove downloaded file
 	rm "/tmp/$FILE_DESTINATION"
 
 	# Transform file
-	"$(dirname "$0")/transform-document.sh" "$DIR/src/content/documents/$FILE_DESTINATION"
+	"$(dirname "$0")/transform-document.sh" "$DIR/src/content/private-documents/$FILE_DESTINATION"
 
 done

@@ -27,7 +27,7 @@ const { Content, headings } = await (entry as any).render()
 
 <Layout title={headings[0].text}>
 
-	<RenderDocument>
+	<RenderDocument data={entry.data}>
 		<Content />
 	</RenderDocument>
 
