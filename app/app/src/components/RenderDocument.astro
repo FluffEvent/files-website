@@ -23,6 +23,24 @@ const version = data.version || import.meta.env.GITHUB_SHA || 'dev'
 
 <div class="main">
 
+	<div class="content-controls">
+
+		<button class="btn" data-content-control="split">
+			Split document in pages
+		</button>
+
+		<button class="btn" data-content-control="print">
+			Print
+		</button>
+
+		<button class="btn" data-content-control="reload">
+			Reload page
+		</button>
+
+	</div>
+
+	<div class="content-ruler"></div>
+
 	<div class="content-wrapper">
 
 		<div class="content-header">
@@ -59,21 +77,43 @@ const version = data.version || import.meta.env.GITHUB_SHA || 'dev'
 
 	</div>
 
+	<div class="content-print">
+		<!-- Generated with JavaScript -->
+	</div>
+
 </div>
 
 <style lang="scss" is:global>
 @page {
 	size: A4;
-	margin-top: 13.2mm; // Instead of 19mm for the header
-	margin-left: 19mm;
-	margin-right: 13.2mm;
-	margin-bottom: 19mm;
+	margin: 0;
 }
 </style>
 
 <style lang="scss">
 .main {
 	@apply flex flex-col justify-start items-center;
+
+	.content-controls {
+		@apply flex justify-center items-center gap-4;
+		@apply mt-8;
+
+		@media print {
+			@apply hidden;
+		}
+
+		.btn {
+			@apply bg-cyan-600;
+			@apply px-2 py-1;
+			@apply text-sm text-white font-semibold;
+			@apply border border-cyan-700 rounded-lg;
+			@apply cursor-pointer;
+
+			&:hover {
+				@apply bg-cyan-700;
+			}
+		}
+	}
 
 	.content-wrapper {
 		@apply relative flex flex-col;
@@ -294,6 +334,140 @@ document.addEventListener('DOMContentLoaded', () =>
 				element.replaceWith(div)
 			}
 		}
+	})
+})
+
+let isSplitDocument = false
+
+function splitDocument()
+{
+	if (isSplitDocument)
+	{
+		// Already split
+		return
+	}
+
+	// Get wrapper elements
+	const contentWrapper = document.querySelector('.content-wrapper')
+	const contentBody = contentWrapper!.querySelector('.content-body')
+	const contentPrint = document.querySelector('.content-print')
+
+	// Get content body elements
+	const contentElements = contentBody?.children
+
+	if (!contentElements || contentElements.length <= 0)
+	{
+		return
+	}
+
+	// Clear content print pages
+	contentPrint!.innerHTML = ''
+
+	// Create a temporary blank page to get the maximum height
+	const contentBlankPage = contentWrapper!.cloneNode(true) as Element
+	contentBlankPage.classList.add('print-sized')
+	const contentBlankBody = contentBlankPage.querySelector('.content-body')
+	contentBlankBody!.innerHTML = ''
+	contentPrint!.appendChild(contentBlankPage)
+	const maxPageHeight = contentBlankBody!.getBoundingClientRect().height!
+
+	const pages: Array<Array<Element>> = [ [] ]
+	let absoluteTop = Number.NaN
+
+	for (const element of contentElements)
+	{
+		if (element.tagName === 'HR')
+		{
+			// Start new page, as always on hr elements
+			pages.push([])
+			absoluteTop = NaN
+			continue
+		}
+
+		const rect = element.getBoundingClientRect()
+
+		if (Number.isNaN(absoluteTop))
+		{
+			// Use the element's top position
+			absoluteTop = rect.top
+		}
+
+		const contentHeight = rect.bottom - absoluteTop
+
+		if (rect.top >= 1 && contentHeight > maxPageHeight)
+		{
+			// Start new page, unless the element is top of the page
+			pages.push([])
+			absoluteTop = rect.top
+		}
+
+		// Add element to the last page
+		pages[pages.length - 1]!.push(element)
+	}
+
+	// Hide the content wrapper
+	contentWrapper!.style.setProperty('display', 'none')
+
+	// Clear the content print
+	contentPrint!.innerHTML = ''
+
+	// Create content print pages
+	for (let pageNum = 1; pageNum <= pages.length; ++pageNum)
+	{
+		const page = pages[pageNum - 1]
+
+		// Create a new page
+		const contentPage = contentBlankPage.cloneNode(true) as Element
+		const contentPageBody = contentPage.querySelector('.content-body')
+		contentPageBody!.innerHTML = ''
+		contentPageBody!.append(...page!)
+
+		// Replace page number
+		const pageNumbers = contentPage!.querySelectorAll('.page-number')
+		pageNumbers.forEach((element) =>
+		{
+			element.textContent = `${pageNum}`
+		})
+
+		// Replace page count
+		const pageCounts = contentPage!.querySelectorAll('.page-count')
+		pageCounts.forEach((element) =>
+		{
+			element.textContent = `${pages.length}`
+		})
+
+		contentPrint!.appendChild(contentPage)
+	}
+
+	isSplitDocument = true
+}
+
+document.querySelectorAll('[data-content-control="split"]').forEach((element) =>
+{
+	element.addEventListener('click', () =>
+	{
+		splitDocument()
+	})
+})
+
+window.addEventListener('beforeprint', () =>
+{
+	splitDocument()
+})
+
+document.querySelectorAll('[data-content-control="print"]').forEach((element) =>
+{
+	element.addEventListener('click', () =>
+	{
+		window.print()
+	})
+})
+
+document.querySelectorAll('[data-content-control="reload"]').forEach((element) =>
+{
+	element.addEventListener('click', () =>
+	{
+		location.reload()
 	})
 })
 </script>
