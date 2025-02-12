@@ -45,23 +45,15 @@ for FILE_INPUT in $FILES; do
 		-H "Authorization: Bearer $(gh auth token)" \
 		-o "/tmp/$FILE_DESTINATION"
 
-	# Create destination file
-	mkdir -p "$DIR/src/content/private-documents"
-	touch "$DIR/src/content/private-documents/$FILE_DESTINATION"
-
-	# Append front matter to destination file
-	echo '---' > "$DIR/src/content/private-documents/$FILE_DESTINATION"
-	echo 'version: "'"$COMMIT_HASH"'"' >> "$DIR/src/content/private-documents/$FILE_DESTINATION"
-	echo '---' >> "$DIR/src/content/private-documents/$FILE_DESTINATION"
-
-	# Append downloaded file content to destination file
-	echo '' >> "$DIR/src/content/private-documents/$FILE_DESTINATION"
-	cat "/tmp/$FILE_DESTINATION" >> "$DIR/src/content/private-documents/$FILE_DESTINATION"
-
-	# Remove downloaded file
-	rm "/tmp/$FILE_DESTINATION"
+	# Add version to file
+	"$(dirname "$0")/version-document.sh" "/tmp/$FILE_DESTINATION" "$COMMIT_HASH"
 
 	# Transform file
-	"$(dirname "$0")/transform-document.sh" "$DIR/src/content/private-documents/$FILE_DESTINATION"
+	"$(dirname "$0")/transform-document.sh" "/tmp/$FILE_DESTINATION"
+
+	# Copy file to destination
+	mkdir -p "$DIR/src/content/private-documents"
+	cp "/tmp/$FILE_DESTINATION" "$DIR/src/content/private-documents/$FILE_DESTINATION"
+	rm "/tmp/$FILE_DESTINATION"
 
 done
