@@ -19,9 +19,30 @@ function splitHash(hash: string)
 
 const data = Astro.props.data || {}
 const version = data.version || import.meta.env.GITHUB_SHA || 'dev'
+
+const footerText = data.footer || null
 ---
 
 <div class="main">
+
+	<div class="content-controls">
+
+		<button class="btn" data-content-control="split">
+			Split document in pages
+		</button>
+
+		<button class="btn" data-content-control="print">
+			Print
+		</button>
+
+		<button class="btn" data-content-control="reload">
+			Reload page
+		</button>
+
+	</div>
+
+	<div class="content-ruler"></div>
+
 	<div class="content-wrapper">
 
 		<div class="content-header">
@@ -44,51 +65,63 @@ const version = data.version || import.meta.env.GITHUB_SHA || 'dev'
 			</div>
 		)}
 
-		<!-- Table hack for print layout -->
-		<!-- https://medium.com/@Idan_Co/the-ultimate-print-html-template-with-header-footer-568f415f6d2a -->
-		<table>
-		<thead><tr><td>
+		<div class="content-body">
+			<slot /> <!-- Rendered content -->
+		</div>
 
-			<div class="header-space">
-				&nbsp;
+		<div class="content-footer two-columns">
+			<div class="left">
+				{footerText !== null && (
+					<Fragment set:html={footerText} />
+				)}
 			</div>
-
-		</td></tr></thead>
-		<tbody><tr><td>
-
-			<div class="content-body">
-				<slot /> <!-- Rendered content -->
+			<div class="right">
+				<p>Page <span class="page-number">00</span> / <span class="page-count">00</span></p>
 			</div>
-
-		</td></tr></tbody>
-		<tfoot><tr><td>
-
-			<div class="footer-space">
-				&nbsp;
-			</div>
-
-		</td></tr></tfoot>
-		</table>
+		</div>
 
 	</div>
+
+	<div class="content-print">
+		<!-- Generated with JavaScript -->
+	</div>
+
 </div>
 
 <style lang="scss" is:global>
 @page {
 	size: A4;
-	margin-top: 13.2mm; // Instead of 19mm for the header
-	margin-left: 19mm;
-	margin-right: 13.2mm;
-	margin-bottom: 19mm;
+	margin: 0;
 }
 </style>
 
 <style lang="scss">
 .main {
-	@apply flex justify-center;
+	@apply flex flex-col justify-start items-center;
+
+	.content-controls {
+		@apply flex justify-center items-center gap-4;
+		@apply mt-8;
+
+		@media print {
+			@apply hidden;
+		}
+
+		.btn {
+			@apply bg-cyan-600;
+			@apply px-2 py-1;
+			@apply text-sm text-white font-semibold;
+			@apply border border-cyan-700 rounded-lg;
+			@apply cursor-pointer;
+
+			&:hover {
+				@apply bg-cyan-700;
+			}
+		}
+	}
 
 	.content-wrapper {
-		@apply relative;
+		@apply relative flex flex-col;
 		@apply bg-white;
 		width: 210mm;
 		@apply m-8 mb-16;
@@ -100,19 +133,20 @@ const version = data.version || import.meta.env.GITHUB_SHA || 'dev'
 		@apply shadow-lg;
 		font-family: 'Noto Serif Variable', 'Georgia', serif;
 
+		&.print-sized {
+			height: 297mm;
+		}
+
 		@media print {
-			@apply bg-inherit w-full m-0 p-0;
+			@apply bg-inherit w-full m-0;
 			@apply border-0 shadow-none;
 		}
 
 		.content-header {
-			@apply relative flex justify-center items-end w-full h-24;
+			@apply relative flex justify-center items-end;
+			@apply w-full h-24;
 			margin-top: calc(13.2mm - 19mm);
 			margin-bottom: calc(19mm - 13.2mm);
-
-			@media print {
-				@apply fixed top-0 my-0;
-			}
 
 			.overlay {
 				@apply absolute inset-0 flex justify-center items-center;
@@ -129,26 +163,39 @@ const version = data.version || import.meta.env.GITHUB_SHA || 'dev'
 			}
 		}
 
-		.header-space {
-			@apply h-0;
-
-			@media print {
-				height: calc(6rem + 19mm - 13.2mm);
-			}
-		}
-
 		.content-watermark {
 			@apply hidden;
 			@apply opacity-20;
 
 			@media print {
-				@apply fixed inset-0 flex justify-center items-center;
+				@apply absolute inset-0 flex justify-center items-center;
 			}
 
 			.specimen {
 				@apply text-9xl text-center font-bold text-red-500;
 				// Rotate 45 degrees
 				transform: rotate(-45deg);
+			}
+		}
+
+		.content-body {
+			@apply flex-grow;
+		}
+
+		.content-footer {
+			@apply flex justify-between items-start gap-4;
+			@apply mt-8;
+			margin-top: calc(19mm - 13.2mm);
+			margin-bottom: calc(13.2mm - 19mm);
+
+			.left, .right {
+				@apply flex flex-col justify-center items-start;
+				@apply flex-grow;
+				flex-basis: 100%;
+			}
+
+			.right {
+				@apply items-end;
 			}
 		}
 	}
@@ -258,6 +305,10 @@ const version = data.version || import.meta.env.GITHUB_SHA || 'dev'
 		}
 	}
 }
+
+*:last-child {
+	margin-bottom: 0 !important;
+}
 </style>
 
 <script>
@@ -288,6 +339,140 @@ document.addEventListener('DOMContentLoaded', () =>
 				element.replaceWith(div)
 			}
 		}
+	})
+})
+
+let isSplitDocument = false
+
+function splitDocument()
+{
+	if (isSplitDocument)
+	{
+		// Already split
+		return
+	}
+
+	// Get wrapper elements
+	const contentWrapper = document.querySelector('.content-wrapper')
+	const contentBody = contentWrapper!.querySelector('.content-body')
+	const contentPrint = document.querySelector('.content-print')
+
+	// Get content body elements
+	const contentElements = contentBody?.children
+
+	if (!contentElements || contentElements.length <= 0)
+	{
+		return
+	}
+
+	// Clear content print pages
+	contentPrint!.innerHTML = ''
+
+	// Create a temporary blank page to get the maximum height
+	const contentBlankPage = contentWrapper!.cloneNode(true) as Element
+	contentBlankPage.classList.add('print-sized')
+	const contentBlankBody = contentBlankPage.querySelector('.content-body')
+	contentBlankBody!.innerHTML = ''
+	contentPrint!.appendChild(contentBlankPage)
+	const maxPageHeight = contentBlankBody!.getBoundingClientRect().height!
+
+	const pages: Array<Array<Element>> = [ [] ]
+	let absoluteTop = Number.NaN
+
+	for (const element of contentElements)
+	{
+		if (element.tagName === 'HR')
+		{
+			// Start new page, as always on hr elements
+			pages.push([])
+			absoluteTop = NaN
+			continue
+		}
+
+		const rect = element.getBoundingClientRect()
+
+		if (Number.isNaN(absoluteTop))
+		{
+			// Use the element's top position
+			absoluteTop = rect.top
+		}
+
+		const contentHeight = rect.bottom - absoluteTop
+
+		if (rect.top >= 1 && contentHeight > maxPageHeight)
+		{
+			// Start new page, unless the element is top of the page
+			pages.push([])
+			absoluteTop = rect.top
+		}
+
+		// Add element to the last page
+		pages[pages.length - 1]!.push(element)
+	}
+
+	// Hide the content wrapper
+	contentWrapper!.style.setProperty('display', 'none')
+
+	// Clear the content print
+	contentPrint!.innerHTML = ''
+
+	// Create content print pages
+	for (let pageNum = 1; pageNum <= pages.length; ++pageNum)
+	{
+		const page = pages[pageNum - 1]
+
+		// Create a new page
+		const contentPage = contentBlankPage.cloneNode(true) as Element
+		const contentPageBody = contentPage.querySelector('.content-body')
+		contentPageBody!.innerHTML = ''
+		contentPageBody!.append(...page!)
+
+		// Replace page number
+		const pageNumbers = contentPage!.querySelectorAll('.page-number')
+		pageNumbers.forEach((element) =>
+		{
+			element.textContent = `${pageNum}`
+		})
+
+		// Replace page count
+		const pageCounts = contentPage!.querySelectorAll('.page-count')
+		pageCounts.forEach((element) =>
+		{
+			element.textContent = `${pages.length}`
+		})
+
+		contentPrint!.appendChild(contentPage)
+	}
+
+	isSplitDocument = true
+}
+
+document.querySelectorAll('[data-content-control="split"]').forEach((element) =>
+{
+	element.addEventListener('click', () =>
+	{
+		splitDocument()
+	})
+})
+
+window.addEventListener('beforeprint', () =>
+{
+	splitDocument()
+})
+
+document.querySelectorAll('[data-content-control="print"]').forEach((element) =>
+{
+	element.addEventListener('click', () =>
+	{
+		window.print()
+	})
+})
+
+document.querySelectorAll('[data-content-control="reload"]').forEach((element) =>
+{
+	element.addEventListener('click', () =>
+	{
+		location.reload()
 	})
 })
 </script>
