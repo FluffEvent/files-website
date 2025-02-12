@@ -19,6 +19,8 @@ function splitHash(hash: string)
 
 const data = Astro.props.data || {}
 const version = data.version || import.meta.env.GITHUB_SHA || 'dev'
+
+const footerText = data.footer || null
 ---
 
 <div class="main">
@@ -69,6 +71,9 @@ const version = data.version || import.meta.env.GITHUB_SHA || 'dev'
 
 		<div class="content-footer two-columns">
 			<div class="left">
+				{footerText !== null && (
+					<Fragment set:html={footerText} />
+				)}
 			</div>
 			<div class="right">
 				<p>Page <span class="page-number">00</span> / <span class="page-count">00</span></p>
