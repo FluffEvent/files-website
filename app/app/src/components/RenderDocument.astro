@@ -358,9 +358,9 @@ function splitDocument()
 	const contentPrint = document.querySelector('.content-print')
 
 	// Get content body elements
-	const contentElements = contentBody?.children
+	const contentElements = contentBody ? Array.from(contentBody.children) : []
 
-	if (!contentElements || contentElements.length <= 0)
+	if (contentElements.length <= 0)
 	{
 		return
 	}
@@ -379,8 +379,10 @@ function splitDocument()
 	const pages: Array<Array<Element>> = [ [] ]
 	let absoluteTop = Number.NaN
 
-	for (const element of contentElements)
+	for (let elementIndex = 0; elementIndex < contentElements.length; ++elementIndex)
 	{
+		const element = contentElements[elementIndex]
+
 		if (element.tagName === 'HR')
 		{
 			// Start new page, as always on hr elements
@@ -404,6 +406,23 @@ function splitDocument()
 			// Start new page, unless the element is top of the page
 			pages.push([])
 			absoluteTop = rect.top
+		}
+
+		if ([ 'H1', 'H2', 'H3', 'H4' ].includes(element.tagName))
+		{
+			// Check the element after the heading fits on the page
+			const nextElement = contentElements[elementIndex + 1]
+			if (nextElement)
+			{
+				const nextRect = nextElement.getBoundingClientRect()
+				const nextContentHeight = nextRect.bottom - absoluteTop
+				if (nextContentHeight > maxPageHeight)
+				{
+					// Start new page, because the next element does not fit after the heading
+					pages.push([])
+					absoluteTop = nextRect.top
+				}
+			}
 		}
 
 		// Add element to the last page
