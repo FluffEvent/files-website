@@ -357,6 +357,22 @@ function splitDocument()
 	const contentBody = contentWrapper!.querySelector('.content-body')
 	const contentPrint = document.querySelector('.content-print')
 
+	// Split list elements
+	const contentBodyLists = contentBody ? Array.from(contentBody.querySelectorAll('UL, OL')) : []
+	for (const list of contentBodyLists)
+	{
+		const listItems = Array.from(list.children)
+		const newLists = []
+		for (const listItem of listItems)
+		{
+			const newList = document.createElement(list.tagName)
+			newList.appendChild(listItem)
+			newLists.push(newList)
+		}
+
+		list.replaceWith(...newLists)
+	}
+
 	// Get content body elements
 	const contentElements = contentBody ? Array.from(contentBody.children) : []
 
