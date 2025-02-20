@@ -399,7 +399,7 @@ function splitDocument()
 
 	for (let elementIndex = 0; elementIndex < contentElements.length; ++elementIndex)
 	{
-		const element = contentElements[elementIndex]
+		const element = contentElements[elementIndex]!
 
 		if (element.tagName === 'HR')
 		{
@@ -448,7 +448,7 @@ function splitDocument()
 	}
 
 	// Hide the content wrapper
-	contentWrapper!.style.setProperty('display', 'none')
+	(contentWrapper! as HTMLElement).style.setProperty('display', 'none')
 
 	// Clear the content print
 	contentPrint!.innerHTML = ''
