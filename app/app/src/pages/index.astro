@@ -57,7 +57,7 @@ function getTitleFromBody(body: string | undefined): string | undefined
 				<ul>
 					{documents.map((document) => (
 						<li>
-							<a href={`/document/${document.slug!}`}>{getTitleFromBody(document.body) || document.slug!}</a>
+							<a href={`/document/${(document as any).slug}`}>{getTitleFromBody(document.body) || (document as any).slug}</a>
 						</li>
 					))}
 				</ul>
@@ -83,7 +83,7 @@ function getTitleFromBody(body: string | undefined): string | undefined
 			<ul>
 				{privateDocuments.map((document) => (
 					<li>
-						<a href={`/private-document/${document.slug!}`}>{getTitleFromBody(document.body) || document.slug!}</a>
+						<a href={`/private-document/${(document as any).slug}`}>{getTitleFromBody(document.body) || (document as any).slug}</a>
 					</li>
 				))}
 			</ul>
