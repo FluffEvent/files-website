@@ -284,10 +284,10 @@ const footerText = data.footer || null
 
 	:global(span.input-line) {
 		@apply relative inline-block;
-		@apply w-1/4 mx-1;
+		@apply w-1/8 h-4 mx-1;
 
 		&::before {
-			@apply absolute block;
+			@apply absolute block top-full;
 			@apply w-full mt-0.5;
 			@apply border-b border-gray-400 border-dashed;
 			content: '';
@@ -295,6 +295,10 @@ const footerText = data.footer || null
 
 		&:global(.input-line-long), &:global(.input-line-long) {
 			@apply w-full;
+		}
+
+		&:global(.input-line-next) {
+			@apply -ml-0.5;
 		}
 	}
 
