@@ -15,8 +15,11 @@ fi
 
 echo "Transforming file '$FILE'..."
 
-# Replace '.....' with long input line
-sed -i 's|\.\{5\}|<span class="input-line input-line-long"></span>|g' "$FILE"
+# Replace '\[.....\]' or '.....' with long input line
+sed -i 's/\\\[\.\{5\}\\\]\|\.\{5\}/<span class="input-line input-line-long"><\/span>/g' "$FILE"
 
-# Replace '....' with standard input line
-sed -i 's|\.\{4\}|<span class="input-line"></span>|g' "$FILE"
+# Replace '\[....\]' with two standard input lines
+sed -i 's/\\\[\.\{4\}\\\]/<span class="input-line"><\/span><span class="input-line input-line-next"><\/span><span class="input-line input-line-next"><\/span><span class="input-line input-line-next"><\/span>/g' "$FILE"
+
+# Replace '\[...\]' or '....' with standard input line
+sed -i 's/\\\[\.\{3\}\\\]\|\.\{4\}/<span class="input-line"><\/span><span class="input-line input-line-next"><\/span>/g' "$FILE"
