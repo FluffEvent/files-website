@@ -5,13 +5,18 @@ on:
   # Run on pull requests to primary branches
   pull_request:
     branches:
+      # Production
       - main
+      # Development
       - dev
     paths:
+      # CI files
       - '.github/workflows/check.yml'
-      - 'app/**'
       - 'docker-compose.yml'
       - 'docker-compose.cicd.yml'
+      - '.env'
+      # Application files
+      - 'app/**'
 
   # Run on manual triggers
   workflow_dispatch:
@@ -31,17 +36,29 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 15
 
     steps:
 
+      # Steps dependencies
+
       - name: Checkout
         uses: actions/checkout@v4
+
+      # Execution steps
 
       - name: Download FluffEvent association documents
         run: |
           # download-documents.sh ./app/app
           sh ./cicd/download-documents.sh ./app/app
+
+      - name: Pull dependencies
+        run: |
+          # docker compose pull --ignore-buildable
+          docker compose \
+            -f ./docker-compose.yml -f ./docker-compose.cicd.yml \
+            --env-file .env \
+            pull --ignore-buildable
 
       - name: Build for production
         env:
@@ -50,27 +67,24 @@ jobs:
           BUILD_CHECK: "true" # Run type checks
         run: |
           # docker compose build
+          export DOCKER_UID="$(id -u)"
           docker compose \
-            -f docker-compose.yml -f docker-compose.cicd.yml \
+            -f ./docker-compose.yml -f ./docker-compose.cicd.yml \
             --env-file .env \
             build
 
       - name: Copy application files
         run: |
           # docker compose up
+          export DOCKER_UID="$(id -u)"
           docker compose \
-            -f docker-compose.yml -f docker-compose.cicd.yml \
+            -f ./docker-compose.yml -f ./docker-compose.cicd.yml \
             --env-file .env \
             up
 
-      - name: Chown dist folder to $USER
-        run: |
-          # chown $USER ./app/dist
-          sudo chown -R $USER:$USER ./app/dist
-
       - name: Check application files
         run: |
-          # Verify some application files exist
+          # Check application files
           [ -d ./app/dist ] && [ $(ls -1 ./app/dist | wc -l) -gt 0 ] \
             && echo "Application files found" \
             || ( echo "No application files found" && exit 1 )

@@ -1,5 +1,5 @@
 ---
-import { getCollection, getEntry } from 'astro:content'
+import { getCollection } from 'astro:content'
 import Layout from '~/layouts/Layout.astro'
 
 import logosrc from '~/assets/logo.png?url'
@@ -10,8 +10,13 @@ const _ = i18nFactory(Astro.currentLocale as any)
 const documents = await getCollection('documents')
 const privateDocuments = await getCollection('private-documents')
 
-function getTitleFromBody(body: string): string | undefined
+function getTitleFromBody(body: string | undefined): string | undefined
 {
+	if (!body)
+	{
+		return undefined
+	}
+
 	// Get text from heading 1 in markdown body
 	const match = body.match(/^#\s+(.*)$/m)
 	return match ? match[1] : undefined
@@ -52,7 +57,7 @@ function getTitleFromBody(body: string): string | undefined
 				<ul>
 					{documents.map((document) => (
 						<li>
-							<a href={`/document/${document.slug}`}>{getTitleFromBody(document.body) || document.slug}</a>
+							<a href={`/document/${(document as any).slug}`}>{getTitleFromBody(document.body) || (document as any).slug}</a>
 						</li>
 					))}
 				</ul>
@@ -78,7 +83,7 @@ function getTitleFromBody(body: string): string | undefined
 			<ul>
 				{privateDocuments.map((document) => (
 					<li>
-						<a href={`/private-document/${document.slug}`}>{getTitleFromBody(document.body) || document.slug}</a>
+						<a href={`/private-document/${(document as any).slug}`}>{getTitleFromBody(document.body) || (document as any).slug}</a>
 					</li>
 				))}
 			</ul>
@@ -88,7 +93,9 @@ function getTitleFromBody(body: string): string | undefined
 
 </Layout>
 
-<style lang="scss">
+<style>
+@reference '~/styles/tailwind.css';
+
 :global(body) {
 	@apply p-6;
 }

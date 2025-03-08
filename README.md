@@ -1,6 +1,6 @@
-# Fluff Event association documents website
+# Fluff Event files website
 
-Astro web application project to render the Fluff Event association documents in printable web pages.
+Web application for serving Fluff Event association documents in printable web pages.
 
 
 ## License
