@@ -363,22 +363,6 @@ function splitDocument()
 	const contentBody = contentWrapper!.querySelector('.content-body')
 	const contentPrint = document.querySelector('.content-print')
 
-	// Split list elements
-	const contentBodyLists = contentBody ? Array.from(contentBody.querySelectorAll('UL, OL')) : []
-	for (const list of contentBodyLists)
-	{
-		const listItems = Array.from(list.children)
-		const newLists = []
-		for (const listItem of listItems)
-		{
-			const newList = document.createElement(list.tagName)
-			newList.appendChild(listItem)
-			newLists.push(newList)
-		}
-
-		list.replaceWith(...newLists)
-	}
-
 	// Get content body elements
 	const contentElements = contentBody ? Array.from(contentBody.children) : []
 
@@ -403,7 +387,7 @@ function splitDocument()
 
 	for (let elementIndex = 0; elementIndex < contentElements.length; ++elementIndex)
 	{
-		const element = contentElements[elementIndex]!
+		let element = contentElements[elementIndex]!
 
 		if (element.tagName === 'HR')
 		{
@@ -423,26 +407,67 @@ function splitDocument()
 
 		const contentHeight = rect.bottom - absoluteTop
 
-		if (rect.top >= 1 && contentHeight > maxPageHeight)
-		{
-			// Start new page, unless the element is top of the page
-			pages.push([])
-			absoluteTop = rect.top
-		}
 
-		if ([ 'H1', 'H2', 'H3', 'H4' ].includes(element.tagName))
+		if ([ 'UL', 'OL' ].includes(element.tagName))
 		{
-			// Check the element after the heading fits on the page
-			const nextElement = contentElements[elementIndex + 1]
-			if (nextElement)
+			// Check for some list items that does not fit on the page
+			while (true)
 			{
-				const nextRect = nextElement.getBoundingClientRect()
-				const nextContentHeight = nextRect.bottom - absoluteTop
-				if (nextContentHeight > maxPageHeight)
+				let listItemIndex = 0
+				const listItems = Array.from(element.children)
+				for (; listItemIndex < listItems.length; ++listItemIndex)
 				{
-					// Start new page, because the next element does not fit after the heading
-					pages.push([])
-					absoluteTop = nextRect.top
+					const listItem = listItems[listItemIndex]!
+					const listItemRect = listItem.getBoundingClientRect()
+					const listItemContentHeight = listItemRect.bottom - absoluteTop
+					if (listItemContentHeight > maxPageHeight)
+					{
+						// Found items that does not fit on the page
+						// Split the list in two groups
+						// Append the first group to the current page, and start a new page
+						const firstList = document.createElement(element.tagName)
+						firstList.append(...listItems.slice(0, listItemIndex))
+						pages[pages.length - 1]!.push(firstList)
+						pages.push([])
+						absoluteTop = listItemRect.top
+						// Repeat the process with the second group
+						const secondList = document.createElement(element.tagName)
+						secondList.append(...listItems.slice(listItemIndex))
+						element = secondList
+						break
+					}
+				}
+
+				if (listItemIndex >= listItems.length)
+				{
+					// No more items to check
+					break
+				}
+			}
+		}
+		else
+		{
+			if (rect.top >= 1 && contentHeight > maxPageHeight)
+			{
+				// Start new page, unless the element is top of the page
+				pages.push([])
+				absoluteTop = rect.top
+			}
+
+			if ([ 'H1', 'H2', 'H3', 'H4' ].includes(element.tagName))
+			{
+				// Check the element after the heading fits on the page
+				const nextElement = contentElements[elementIndex + 1]
+				if (nextElement)
+				{
+					const nextRect = nextElement.getBoundingClientRect()
+					const nextContentHeight = nextRect.bottom - absoluteTop
+					if (nextContentHeight > maxPageHeight)
+					{
+						// Start new page, because the next element does not fit after the heading
+						pages.push([])
+						absoluteTop = nextRect.top
+					}
 				}
 			}
 		}
