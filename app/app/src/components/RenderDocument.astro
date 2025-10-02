@@ -88,15 +88,15 @@ const footerText = data.footer || null
 
 </div>
 
-<style lang="scss" is:global>
+<style is:global>
 @page {
 	size: A4;
 	margin: 0;
 }
 </style>
 
-<style lang="scss">
-@reference "~/styles/tailwind.css";
+<style>
+@reference '~/styles/tailwind.css';
 
 .main {
 	@apply flex flex-col justify-start items-center;
@@ -202,7 +202,7 @@ const footerText = data.footer || null
 		}
 	}
 
-	:global h1.a {
+	:global(h1) {
 		@apply mb-8 text-3xl text-center font-bold;
 		@apply break-after-avoid;
 	}
