@@ -112,10 +112,11 @@ const footerText = data.footer || null
 
 .main {
 	@apply flex flex-col justify-start items-center;
+	@apply pt-8 pb-16;
 
 	.controls {
 		@apply flex justify-center items-center gap-4;
-		@apply w-full mt-8;
+		@apply w-full mb-8;
 
 		@media print {
 			@apply hidden;
@@ -165,7 +166,7 @@ const footerText = data.footer || null
 		@apply relative flex flex-col;
 		@apply bg-white;
 		width: 210mm;
-		@apply m-8 mb-16;
+		@apply mb-16;
 		padding-top: 19mm;
 		padding-left: 19mm;
 		padding-right: 13.2mm;
