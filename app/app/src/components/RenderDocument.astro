@@ -241,44 +241,44 @@ const footerText = data.footer || null
 		}
 	}
 
-	h1 {
+	:global(h1) {
 		@apply mb-8 text-3xl text-center font-bold;
 		@apply break-after-avoid;
 	}
 
-	h2 {
+	:global(h2) {
 		@apply mb-4 text-xl font-bold;
 		@apply break-after-avoid;
 	}
 
-	h3 {
+	:global(h3) {
 		@apply mb-4 text-lg font-semibold;
 		@apply break-after-avoid;
 	}
 
-	h4 {
+	:global(h4) {
 		@apply mb-4 text-base font-semibold;
 		@apply break-after-avoid;
 	}
 
-	p, ul, ol {
+	:global(p), :global(ul), :global(ol) {
 		@apply mb-4;
 
-		+ h1, + h2, + h3, + h4 {
+		+ :global(h1), + :global(h2), + :global(h3), + :global(h4) {
 			@apply mt-8;
 		}
 	}
 
-	ul, ol {
+	:global(ul), :global(ol) {
 		@apply ml-8 list-outside;
 		list-style-type: '-';
 
-		> li {
+		> :global(li) {
 			@apply pl-4;
 		}
 	}
 
-	hr {
+	:global(hr) {
 		@apply mx-0 my-8 border-t border-gray-300;
 		@apply break-after-page;
 
@@ -287,41 +287,41 @@ const footerText = data.footer || null
 		}
 	}
 
-	blockquote {
+	:global(blockquote) {
 		@apply mb-4 pl-4 pt-2 pb-4;
 		@apply border-l-2 border-gray-300;
 
-		> *:last-child {
+		> :global(*:last-child) {
 			@apply mb-0;
 		}
 	}
 
-	table {
+	:global(table) {
 		@apply w-full border-collapse;
 
-		td {
+		:global(td) {
 			@apply bg-clip-padding;
 			@apply border-0 border-transparent;
 		}
 
-		thead th {
+		:global(thead th) {
 			@apply font-semibold align-bottom;
 		}
 
-		thead + tbody tr > td, tr + tr > td {
+		:global(thead + tbody tr > td), :global(tr + tr > td) {
 			@apply border-t-[1rem];
 		}
 
-		tr > td + td {
+		:global(tr > td + td) {
 			@apply border-l-[0.5rem];
 		}
 	}
 
-	div.text-center {
+	:global(div.text-center) {
 		@apply mb-6;
 	}
 
-	span.input-line {
+	:global(span.input-line) {
 		@apply relative inline-block;
 		@apply w-1/8 h-4 mx-1;
 
@@ -332,20 +332,20 @@ const footerText = data.footer || null
 			content: '';
 		}
 
-		&.input-line-long, &.input-line-long {
+		&:global(.input-line-long), &:global(.input-line-long) {
 			@apply w-full;
 		}
 
-		&.input-line-next {
+		&:global(.input-line-next) {
 			@apply -ml-0.5;
 		}
 	}
 
-	.signature {
+	:global(.signature) {
 		@apply p-2 max-w-[80%];
 		@apply border-b border-l border-gray-300 rounded-bl-lg;
 
-		.faded-text {
+		:global(.faded-text) {
 			@apply text-gray-500 text-sm;
 		}
 	}
