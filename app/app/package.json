@@ -20,12 +20,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/FluffEvent/association-documents-website.git"
+    "url": "git+https://github.com/FluffEvent/files-website.git"
   },
   "bugs": {
-    "url": "https://github.com/FluffEvent/association-documents-website/issues"
+    "url": "https://github.com/FluffEvent/files-website/issues"
   },
-  "homepage": "https://github.com/FluffEvent/association-documents-website#readme",
+  "homepage": "https://github.com/FluffEvent/files-website#readme",
   "dependencies": {
     "@astrojs/check": "^0.9.4",
     "@fontsource-variable/noto-serif": "^5.2.5",
