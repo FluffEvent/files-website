@@ -25,19 +25,31 @@ const footerText = data.footer || null
 
 <div class="main">
 
-	<div class="content-controls">
+	<div class="controls">
 
-		<button class="btn" data-content-control="split">
-			Split document in pages
-		</button>
+		<div class="page-navigation">
 
-		<button class="btn" data-content-control="print">
-			Print
-		</button>
+			<a href="/" class="btn">
+				Back to document list
+			</a>
 
-		<button class="btn" data-content-control="reload">
-			Reload page
-		</button>
+		</div>
+
+		<div class="content-controls">
+
+			<button class="btn" data-content-control="split">
+				Split document in pages
+			</button>
+
+			<button class="btn" data-content-control="print">
+				Print
+			</button>
+
+			<button class="btn" data-content-control="reload">
+				Reload page
+			</button>
+
+		</div>
 
 	</div>
 
@@ -88,36 +100,63 @@ const footerText = data.footer || null
 
 </div>
 
-<style is:global>
+<style lang="scss" is:global>
 @page {
 	size: A4;
 	margin: 0;
 }
 </style>
 
-<style>
-@reference '~/styles/tailwind.css';
+<style lang="scss">
+@reference "~/styles/tailwind.css";
 
 .main {
 	@apply flex flex-col justify-start items-center;
 
-	.content-controls {
+	.controls {
 		@apply flex justify-center items-center gap-4;
-		@apply mt-8;
+		@apply w-full mt-8;
+
+		@media print {
+			@apply hidden;
+		}
+	}
+
+	.page-navigation, .content-controls {
+		@apply flex justify-center items-center gap-4;
 
 		@media print {
 			@apply hidden;
 		}
 
 		.btn {
-			@apply bg-cyan-600;
+			@apply bg-gray-600;
 			@apply px-2 py-1;
 			@apply text-sm text-white font-semibold;
-			@apply border border-cyan-700 rounded-lg;
+			@apply border border-gray-700 rounded-lg;
 			@apply cursor-pointer;
 
 			&:hover {
+				@apply bg-gray-700;
+			}
+
+			&:active {
+				@apply bg-gray-800;
+			}
+		}
+	}
+
+	.content-controls {
+		.btn {
+			@apply bg-cyan-600;
+			@apply border-cyan-700;
+
+			&:hover {
 				@apply bg-cyan-700;
+			}
+
+			&:active {
+				@apply bg-cyan-800;
 			}
 		}
 	}
