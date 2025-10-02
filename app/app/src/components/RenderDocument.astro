@@ -112,10 +112,11 @@ const footerText = data.footer || null
 
 .main {
 	@apply flex flex-col justify-start items-center;
+	@apply pt-8 pb-24;
 
 	.controls {
 		@apply flex justify-center items-center gap-4;
-		@apply w-full mt-8;
+		@apply w-full mb-8;
 
 		@media print {
 			@apply hidden;
@@ -165,7 +166,7 @@ const footerText = data.footer || null
 		@apply relative flex flex-col;
 		@apply bg-white;
 		width: 210mm;
-		@apply m-8 mb-16;
+		@apply mb-16;
 		padding-top: 19mm;
 		padding-left: 19mm;
 		padding-right: 13.2mm;
@@ -323,10 +324,10 @@ const footerText = data.footer || null
 
 	:global(span.input-line) {
 		@apply relative inline-block;
-		@apply w-1/4 mx-1;
+		@apply w-1/8 h-4 mx-1;
 
 		&::before {
-			@apply absolute block;
+			@apply absolute block top-full;
 			@apply w-full mt-0.5;
 			@apply border-b border-gray-400 border-dashed;
 			content: '';
@@ -334,6 +335,10 @@ const footerText = data.footer || null
 
 		&:global(.input-line-long), &:global(.input-line-long) {
 			@apply w-full;
+		}
+
+		&:global(.input-line-next) {
+			@apply -ml-0.5;
 		}
 	}
 
@@ -398,22 +403,6 @@ function splitDocument()
 	const contentBody = contentWrapper!.querySelector('.content-body')
 	const contentPrint = document.querySelector('.content-print')
 
-	// Split list elements
-	const contentBodyLists = contentBody ? Array.from(contentBody.querySelectorAll('UL, OL')) : []
-	for (const list of contentBodyLists)
-	{
-		const listItems = Array.from(list.children)
-		const newLists = []
-		for (const listItem of listItems)
-		{
-			const newList = document.createElement(list.tagName)
-			newList.appendChild(listItem)
-			newLists.push(newList)
-		}
-
-		list.replaceWith(...newLists)
-	}
-
 	// Get content body elements
 	const contentElements = contentBody ? Array.from(contentBody.children) : []
 
@@ -438,7 +427,7 @@ function splitDocument()
 
 	for (let elementIndex = 0; elementIndex < contentElements.length; ++elementIndex)
 	{
-		const element = contentElements[elementIndex]!
+		let element = contentElements[elementIndex]!
 
 		if (element.tagName === 'HR')
 		{
@@ -458,31 +447,94 @@ function splitDocument()
 
 		const contentHeight = rect.bottom - absoluteTop
 
-		if (rect.top >= 1 && contentHeight > maxPageHeight)
+		if (contentHeight > maxPageHeight)
 		{
-			// Start new page, unless the element is top of the page
-			pages.push([])
-			absoluteTop = rect.top
+			// The element does not fit on the current page
+
+			if ([ 'UL', 'OL' ].includes(element.tagName))
+			{
+				// Try to break the list in multiple parts that fits in pages
+
+				let startItemIndex = 0
+				let listItemIndex = 0
+				const listItems = Array.from(element.children)
+				for (; listItemIndex < listItems.length; ++listItemIndex)
+				{
+					const listItem = listItems[listItemIndex]!
+					const listItemRect = listItem.getBoundingClientRect()
+					const listItemContentHeight = listItemRect.bottom - absoluteTop
+					if (listItemContentHeight > maxPageHeight)
+					{
+						// The current item does not fit on the page
+						// Add the previous items to the current page
+						const listSplice = listItems.slice(startItemIndex, listItemIndex)
+						if (listSplice.length > 0)
+						{
+							const subElement = document.createElement(element.tagName)
+							subElement.append(...listSplice.map((item) => item.cloneNode(true)))
+							pages[pages.length - 1]!.push(subElement)
+						}
+
+						// Create a new page and continue with next items
+						pages.push([])
+						absoluteTop = listItemRect.top
+						startItemIndex = listItemIndex
+					}
+				}
+
+				// Add remaining items to the current page
+				const listSplice = listItems.slice(startItemIndex, listItemIndex)
+				if (listSplice.length > 0)
+				{
+					const subElement = document.createElement(element.tagName)
+					subElement.append(...listSplice.map((item) => item.cloneNode(true)))
+					pages[pages.length - 1]!.push(subElement)
+				}
+				continue
+			}
+
+			if (rect.top >= Number.EPSILON)
+			{
+				// The element is not at the top of the page
+				// Start new page with the element
+				pages.push([ element ])
+				absoluteTop = rect.top
+				continue
+			}
+
+			// The element is at the top of the page
+			// Add it to the current page anyway
+			pages[pages.length - 1]!.push(element)
+			continue
 		}
 
-		if ([ 'H1', 'H2', 'H3', 'H4' ].includes(element.tagName))
+		if (rect.top >= Number.EPSILON)
 		{
-			// Check the element after the heading fits on the page
-			const nextElement = contentElements[elementIndex + 1]
-			if (nextElement)
+			// The element is not at the top of the page,
+			// but it fits on the page
+
+			if ([ 'H1', 'H2', 'H3', 'H4', 'H5', 'H6' ].includes(element.tagName))
 			{
-				const nextRect = nextElement.getBoundingClientRect()
-				const nextContentHeight = nextRect.bottom - absoluteTop
-				if (nextContentHeight > maxPageHeight)
+				// Ensure the next element fits on the page
+				const nextElement = contentElements[elementIndex + 1]
+				if (nextElement)
 				{
-					// Start new page, because the next element does not fit after the heading
-					pages.push([])
-					absoluteTop = nextRect.top
+					const nextRect = nextElement.getBoundingClientRect()
+					const nextContentHeight = nextRect.bottom - absoluteTop
+					if (nextContentHeight > maxPageHeight)
+					{
+						// The next element does not fit on the page
+						// Start new page with the heading and the next element
+						pages.push([ element, nextElement ])
+						absoluteTop = nextRect.top
+						++elementIndex // Skip the next element
+						continue
+					}
 				}
 			}
 		}
 
-		// Add element to the last page
+		// Add element to the current page
 		pages[pages.length - 1]!.push(element)
 	}
 

@@ -20,6 +20,8 @@ BASE_URL="https://raw.githubusercontent.com/$REPO/refs/heads/main"
 FILES=$(cat <<EOF
 Contrats/Contrat%20cession%20droits%20auteur%20EN.md|contrat-cession-droits-auteur-en.md
 Contrats/Contrat%20cession%20droits%20auteur%20FR.md|contrat-cession-droits-auteur-fr.md
+Contrats/Attestation%20responsable%20l%C3%A9gal%20cession%20droits%20auteur%20FR.md|attestation-responsable-legal-cession-droits-auteur-fr.md
+Contrats/Avenant%20identification%20auteur%20FR.md|avenant-identification-auteur-fr.md
 EOF
 )
 
