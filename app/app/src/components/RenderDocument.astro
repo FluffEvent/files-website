@@ -446,12 +446,15 @@ function splitDocument()
 
 		const contentHeight = rect.bottom - absoluteTop
 
-
-		if ([ 'UL', 'OL' ].includes(element.tagName))
+		if (contentHeight > maxPageHeight)
 		{
-			// Check for some list items that does not fit on the page
-			while (true)
+			// The element does not fit on the current page
+
+			if ([ 'UL', 'OL' ].includes(element.tagName))
 			{
+				// Try to break the list in multiple parts that fits in pages
+
+				let startItemIndex = 0
 				let listItemIndex = 0
 				const listItems = Array.from(element.children)
 				for (; listItemIndex < listItems.length; ++listItemIndex)
@@ -461,41 +464,57 @@ function splitDocument()
 					const listItemContentHeight = listItemRect.bottom - absoluteTop
 					if (listItemContentHeight > maxPageHeight)
 					{
-						// Found items that does not fit on the page
-						// Split the list in two groups
-						// Append the first group to the current page, and start a new page
-						const firstList = document.createElement(element.tagName)
-						firstList.append(...listItems.slice(0, listItemIndex))
-						pages[pages.length - 1]!.push(firstList)
+						// The current item does not fit on the page
+						// Add the previous items to the current page
+						const listSplice = listItems.slice(startItemIndex, listItemIndex)
+						if (listSplice.length > 0)
+						{
+							const subElement = document.createElement(element.tagName)
+							subElement.append(...listSplice)
+							pages[pages.length - 1]!.push(subElement)
+						}
+
+						// Create a new page and continue with next items
 						pages.push([])
 						absoluteTop = listItemRect.top
-						// Repeat the process with the second group
-						const secondList = document.createElement(element.tagName)
-						secondList.append(...listItems.slice(listItemIndex))
-						element = secondList
-						break
+						startItemIndex = listItemIndex
 					}
 				}
 
-				if (listItemIndex >= listItems.length)
+				// Add remaining items to the current page
+				const listSplice = listItems.slice(startItemIndex, listItemIndex)
+				if (listSplice.length > 0)
 				{
-					// No more items to check
-					break
+					const subElement = document.createElement(element.tagName)
+					subElement.append(...listSplice)
+					pages[pages.length - 1]!.push(subElement)
 				}
-			}
-		}
-		else
-		{
-			if (rect.top >= 1 && contentHeight > maxPageHeight)
-			{
-				// Start new page, unless the element is top of the page
-				pages.push([])
-				absoluteTop = rect.top
+				continue
 			}
 
-			if ([ 'H1', 'H2', 'H3', 'H4' ].includes(element.tagName))
+			if (rect.top >= Number.EPSILON)
 			{
-				// Check the element after the heading fits on the page
+				// The element is not at the top of the page
+				// Start new page with the element
+				pages.push([ element ])
+				absoluteTop = rect.top
+				continue
+			}
+
+			// The element is at the top of the page
+			// Add it to the current page anyway
+			pages[pages.length - 1]!.push(element)
+			continue
+		}
+
+		if (rect.top >= Number.EPSILON)
+		{
+			// The element is not at the top of the page,
+			// but it fits on the page
+
+			if ([ 'H1', 'H2', 'H3', 'H4', 'H5', 'H6' ].includes(element.tagName))
+			{
+				// Ensure the next element fits on the page
 				const nextElement = contentElements[elementIndex + 1]
 				if (nextElement)
 				{
@@ -503,15 +522,18 @@ function splitDocument()
 					const nextContentHeight = nextRect.bottom - absoluteTop
 					if (nextContentHeight > maxPageHeight)
 					{
-						// Start new page, because the next element does not fit after the heading
-						pages.push([])
+						// The next element does not fit on the page
+						// Start new page with the heading and the next element
+						pages.push([ element, nextElement ])
 						absoluteTop = nextRect.top
+						++elementIndex // Skip the next element
+						continue
 					}
 				}
 			}
 		}
 
-		// Add element to the last page
+		// Add element to the current page
 		pages[pages.length - 1]!.push(element)
 	}
 
