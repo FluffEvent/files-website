@@ -2,6 +2,10 @@
 
 Web application for serving Fluff Event association documents in printable web pages.
 
+You can see it live at [files.fluffevent.fr](https://files.fluffevent.fr/).
+
+You can browse raw and versioned documents at [FluffEvent/association-documents](https://github.com/FluffEvent/association-documents/).
+
 
 ## Getting started
 
