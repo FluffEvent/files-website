@@ -470,7 +470,7 @@ function splitDocument()
 						if (listSplice.length > 0)
 						{
 							const subElement = document.createElement(element.tagName)
-							subElement.append(...listSplice)
+							subElement.append(...listSplice.map((item) => item.cloneNode(true)))
 							pages[pages.length - 1]!.push(subElement)
 						}
 
@@ -486,7 +486,7 @@ function splitDocument()
 				if (listSplice.length > 0)
 				{
 					const subElement = document.createElement(element.tagName)
-					subElement.append(...listSplice)
+					subElement.append(...listSplice.map((item) => item.cloneNode(true)))
 					pages[pages.length - 1]!.push(subElement)
 				}
 				continue
