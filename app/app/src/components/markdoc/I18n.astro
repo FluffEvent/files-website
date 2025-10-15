@@ -1,0 +1,8 @@
+---
+interface Props
+{
+	locales: Record<string, string>
+}
+---
+
+{Astro.props.locales[Astro.currentLocale] ?? Astro.props.locales['en']}
