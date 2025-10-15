@@ -12,7 +12,10 @@ export default defineConfig({
 		assetsPrefix: process.env.ASTRO_ASSETS_PREFIX || undefined,
 	},
 	integrations: [
-		markdoc(),
+		markdoc({
+			allowHTML: true,
+			ignoreIndentation: true,
+		}),
 	],
 	vite: {
 		plugins: [
