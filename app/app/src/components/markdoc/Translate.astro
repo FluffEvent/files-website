@@ -1,0 +1,8 @@
+---
+interface Props
+{
+	[lang: string]: string
+}
+---
+
+{Astro.props[Astro.currentLocale] ?? Astro.props['en']}
