@@ -32,11 +32,19 @@ if [ "$(head -n 1 "${FILE}")" = '---' ]; then
 	LINE=$(grep -m 2 -n '^---$' "${FILE}" | tail -n 1 | cut -d ':' -f 1)
 
 	# Append version to front matter
-	sed -i "5i\version: '${VERSION}'" "${FILE}"
+	docker run \
+		--rm \
+		-v "$(realpath "$(dirname "${FILE}")"):/workdir" \
+		busybox:latest \
+		sed -i "${LINE}i\version: '${VERSION}'" "/workdir/$(basename "${FILE}")"
 
 else
 
 	# Prepend new front matter with version
-	sed -i "1i\---\nversion: '${VERSION}'\n---\n" "${FILE}"
+	docker run \
+		--rm \
+		-v "$(realpath "$(dirname "${FILE}")"):/workdir" \
+		busybox:latest \
+		sed -i "1i---\nversion: '${VERSION}'\n---\n" "/workdir/$(basename "${FILE}")"
 
 fi
