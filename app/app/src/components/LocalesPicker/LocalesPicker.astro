@@ -1,4 +1,6 @@
 ---
+import { getRelativeLocaleUrl } from 'astro:i18n'
+
 export interface Props
 {
 	lang?: string | undefined
@@ -7,19 +9,22 @@ export interface Props
 const {
 	lang = Astro.currentLocale,
 } = Astro.props
-
-// TODO: Get the path for the current page to link to the same page in other locales
-// do that in static rendering mode
 ---
 
 <ul class="lang-list">
 	<li>
-		<a href="/" class:list={[ lang === 'fr' && 'active' ]}>
+		<a
+			href={getRelativeLocaleUrl('fr', Astro.url.pathname)}
+			class:list={[ lang === 'fr' && 'active' ]}
+		>
 			<span class="icon icon-[twemoji--flag-france] icon-align"></span>
 		</a>
 	</li>
 	<li>
-		<a href="/en" class:list={[ lang === 'en' && 'active' ]}>
+		<a
+			href={getRelativeLocaleUrl('en', Astro.url.pathname)}
+			class:list={[ lang === 'en' && 'active' ]}
+		>
 			<span class="icon icon-[twemoji--flag-united-kingdom] icon-align"></span>
 		</a>
 	</li>
