@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'astro:content'
+import LocalesPicker from '~/components/LocalesPicker/LocalesPicker.astro'
 import Layout from '~/layouts/Layout.astro'
 
 import logosrc from '~/assets/logo.png?url'
@@ -36,6 +37,8 @@ function getTitleFromBody(body: string | undefined): string | undefined
 	</div>
 
 	<div class="main">
+
+		<LocalesPicker lang={Astro.currentLocale} />
 
 		<p>
 			<span class="icon icon-[mdi--hand-wave] icon-align icon-fw"></span>
