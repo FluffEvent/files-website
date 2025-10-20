@@ -1,4 +1,6 @@
 ---
+import LocalesPicker from '~/components/LocalesPicker/LocalesPicker.astro'
+
 import logosrc from '~/assets/logo.png?url'
 
 function splitHash(hash: string)
@@ -24,6 +26,8 @@ const footerText = data.footer || null
 ---
 
 <div class="controls">
+
+	<LocalesPicker lang={Astro.currentLocale} />
 
 	<div class="page-navigation">
 
@@ -116,6 +120,10 @@ const footerText = data.footer || null
 
 	@media print {
 		@apply hidden;
+	}
+
+	> :global(.lang-list) {
+		@apply m-0;
 	}
 
 	.page-navigation, .content-controls {
