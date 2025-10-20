@@ -23,35 +23,35 @@ const version = data.version || import.meta.env.GITHUB_SHA || 'dev'
 const footerText = data.footer || null
 ---
 
-<div class="main">
+<div class="controls">
 
-	<div class="controls">
+	<div class="page-navigation">
 
-		<div class="page-navigation">
-
-			<a href="/" class="btn">
-				Back to document list
-			</a>
-
-		</div>
-
-		<div class="content-controls">
-
-			<button class="btn" data-content-control="split">
-				Split document in pages
-			</button>
-
-			<button class="btn" data-content-control="print">
-				Print
-			</button>
-
-			<button class="btn" data-content-control="reload">
-				Reload page
-			</button>
-
-		</div>
+		<a href="/" class="btn">
+			Back to document list
+		</a>
 
 	</div>
+
+	<div class="content-controls">
+
+		<button class="btn" data-content-control="split">
+			Split document in pages
+		</button>
+
+		<button class="btn" data-content-control="print">
+			Print
+		</button>
+
+		<button class="btn" data-content-control="reload">
+			Reload page
+		</button>
+
+	</div>
+
+</div>
+
+<div class="main">
 
 	<div class="content-ruler"></div>
 
@@ -110,17 +110,12 @@ const footerText = data.footer || null
 <style lang="scss">
 @reference "~/styles/tailwind.css";
 
-.main {
-	@apply flex flex-col justify-start items-center;
-	@apply pt-8 pb-24;
+.controls {
+	@apply flex justify-center items-center gap-4;
+	@apply w-full mt-8;
 
-	.controls {
-		@apply flex justify-center items-center gap-4;
-		@apply w-full mb-8;
-
-		@media print {
-			@apply hidden;
-		}
+	@media print {
+		@apply hidden;
 	}
 
 	.page-navigation, .content-controls {
@@ -161,6 +156,11 @@ const footerText = data.footer || null
 			}
 		}
 	}
+}
+
+.main {
+	@apply flex flex-col justify-start items-center;
+	@apply pt-8 pb-24;
 
 	.content-wrapper {
 		@apply relative flex flex-col;
