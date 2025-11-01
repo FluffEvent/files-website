@@ -1,5 +1,4 @@
 #!/bin/sh
-
 set -e
 
 # Get app files directory
@@ -16,12 +15,16 @@ fi
 REPO='FluffEvent/association-private-documents'
 BASE_URL="https://raw.githubusercontent.com/$REPO/refs/heads/main"
 
-# List files to download
-FILES=$(cat <<EOF
-Contrats/Contrat%20cession%20droits%20auteur.mdoc|contrat-cession-droits-auteur.mdoc
-Contrats/Attestation%20responsable%20l%C3%A9gal%20cession%20droits%20auteur%20FR.md|attestation-responsable-legal-cession-droits-auteur-fr.md
-Contrats/Avenant%20identification%20auteur%20FR.md|avenant-identification-auteur-fr.md
-EOF
+# Download list of files to download
+LIST_PATH='files-website-downloads.txt'
+COMMIT_HASH=$(
+	curl -fsSL "https://api.github.com/repos/$REPO/commits/main?path=$LIST_PATH" \
+		-H "Authorization: Bearer $(gh auth token)" \
+	| jq -r '.sha'
+)
+FILES=$(
+	curl -fsSL "$BASE_URL/$LIST_PATH" \
+		-H "Authorization: Bearer $(gh auth token)"
 )
 
 # Iterate over files
