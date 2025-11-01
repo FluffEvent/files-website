@@ -16,10 +16,10 @@ fi
 echo "Transforming file '${FILE}'..."
 
 docker run \
-	--rm \
+	--rm -i \
 	-v "$(realpath "$(dirname "${FILE}")"):/workdir" \
 	busybox:latest \
-	<<EOF
+	sh <<EOF
 # Replace '\[.....\]' or '.....' with long input line
 sed -i 's/\\\[\.\{5\}\\\]\|\.\{5\}/<span class="input-line input-line-long"><\/span>/g' \
 	"/workdir/$(basename "${FILE}")"
