@@ -134,6 +134,7 @@ FROM test_base AS test_unit
 ARG UID
 
 # Copy source code
+RUN chown "${UID}:0" .
 COPY --link --chown="${UID}:0" ./app/ ./
 
 # Run as non-root user
@@ -156,6 +157,7 @@ COPY --from=deps_dev --link --chown="${UID}:0" /app/package.json /app/pnpm-lock.
 RUN pnpm exec playwright install --with-deps
 
 # Copy source code
+RUN chown "${UID}:0" .
 COPY --link --chown="${UID}:0" ./app/ ./
 
 # Build application
@@ -183,20 +185,21 @@ COPY --from=deps_dev --link --chown="${UID}:0" /app/.astro/ ./.astro/
 COPY --from=deps_dev --link --chown="${UID}:0" /app/node_modules/ ./node_modules/
 
 # Copy source code
+RUN chown "${UID}:0" .
 COPY --link --chown="${UID}:0" ./app/ ./
 
 # Create user 'user' in group 'root'
 # (hadolint: Ignore unchecked pipe failures)
 # hadolint ignore=DL4006
-RUN USERNAME="$(getent passwd "${UID}" 2>/dev/null | cut -d: -f1)"; \
+RUN USERNAME="$(getent passwd "${UID}" 2>/dev/null | cut -d: -f1 || true)"; \
 	if [ -z "${USERNAME}" ]; then \
 		useradd -lm -u "${UID}" -U -G 0 user; \
 	else \
 		usermod -a -G 0 "${USERNAME}"; \
 	fi
 
-# Run as non-root user
-USER ${UID}:0
+# Run as created non-root user
+USER ${UID}
 
 # Set exposed port
 ARG PORT=8080

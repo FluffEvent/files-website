@@ -28,7 +28,7 @@ const { Content, headings } = await render(entry)
 <Layout title={headings[0]?.text}>
 
 	<RenderDocument data={entry.data}>
-		<Content />
+		<Content frontmatter={entry.data} lang={Astro.currentLocale} />
 	</RenderDocument>
 
 </Layout>

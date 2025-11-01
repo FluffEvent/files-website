@@ -1,4 +1,5 @@
 import { defineConfig, envField } from 'astro/config'
+import markdoc from '@astrojs/markdoc'
 import tailwindcss from '@tailwindcss/vite'
 
 import { i18n } from '/src/config'
@@ -10,7 +11,12 @@ export default defineConfig({
 	build: {
 		assetsPrefix: process.env.ASTRO_ASSETS_PREFIX || undefined,
 	},
-	integrations: [],
+	integrations: [
+		markdoc({
+			allowHTML: true,
+			ignoreIndentation: true,
+		}),
+	],
 	vite: {
 		plugins: [
 			tailwindcss(),
