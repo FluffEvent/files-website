@@ -32,7 +32,7 @@ for FILE_INPUT in $FILES; do
 	$FILE_INPUT
 	EOF
 
-	echo "Handling file '$FILE_DESTINATION'..."
+	echo "Downloading file '$FILE_DESTINATION'..."
 
 	# Get the latest commit hash for the file
 	COMMIT_HASH=$(
