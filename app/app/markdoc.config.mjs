@@ -6,6 +6,7 @@ export default defineMarkdocConfig({
 			render: component('./src/components/markdoc/I18n.astro'),
 			attributes: {
 				locales: { type: Object, required: true },
+				renderMarkdown: { type: Boolean, default: false },
 			},
 		},
 	},
