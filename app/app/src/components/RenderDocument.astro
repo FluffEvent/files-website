@@ -170,6 +170,10 @@ const footerText = data.footer || null
 	@apply flex flex-col justify-start items-center;
 	@apply pt-8 pb-24;
 
+	@media print {
+		@apply p-0;
+	}
+
 	.content-wrapper {
 		@apply relative flex flex-col;
 		@apply bg-white;
