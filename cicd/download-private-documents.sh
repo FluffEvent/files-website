@@ -1,5 +1,4 @@
 #!/bin/sh
-
 set -e
 
 # Get app files directory
@@ -16,13 +15,16 @@ fi
 REPO='FluffEvent/association-private-documents'
 BASE_URL="https://raw.githubusercontent.com/$REPO/refs/heads/main"
 
-# List files to download
-FILES=$(cat <<EOF
-Contrats/Contrat%20cession%20droits%20auteur%20EN.md|contrat-cession-droits-auteur-en.md
-Contrats/Contrat%20cession%20droits%20auteur%20FR.md|contrat-cession-droits-auteur-fr.md
-Contrats/Attestation%20responsable%20l%C3%A9gal%20cession%20droits%20auteur%20FR.md|attestation-responsable-legal-cession-droits-auteur-fr.md
-Contrats/Avenant%20identification%20auteur%20FR.md|avenant-identification-auteur-fr.md
-EOF
+# Download list of files to download
+LIST_PATH='files-website-downloads.txt'
+COMMIT_HASH=$(
+	curl -fsSL "https://api.github.com/repos/$REPO/commits/main?path=$LIST_PATH" \
+		-H "Authorization: Bearer $(gh auth token)" \
+	| jq -r '.sha'
+)
+FILES=$(
+	curl -fsSL "$BASE_URL/$LIST_PATH" \
+		-H "Authorization: Bearer $(gh auth token)"
 )
 
 # Iterate over files
@@ -33,7 +35,7 @@ for FILE_INPUT in $FILES; do
 	$FILE_INPUT
 	EOF
 
-	echo "Handling file '$FILE_DESTINATION'..."
+	echo "Downloading file '$FILE_DESTINATION'..."
 
 	# Get the latest commit hash for the file
 	COMMIT_HASH=$(
@@ -57,5 +59,7 @@ for FILE_INPUT in $FILES; do
 	mkdir -p "$DIR/src/content/private-documents"
 	cp "/tmp/$FILE_DESTINATION" "$DIR/src/content/private-documents/$FILE_DESTINATION"
 	rm "/tmp/$FILE_DESTINATION"
+
+	echo 'Done. ---'
 
 done

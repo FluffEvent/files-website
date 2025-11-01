@@ -32,7 +32,7 @@ for FILE_INPUT in $FILES; do
 	$FILE_INPUT
 	EOF
 
-	echo "Handling file '$FILE_DESTINATION'..."
+	echo "Downloading file '$FILE_DESTINATION'..."
 
 	# Get the latest commit hash for the file
 	COMMIT_HASH=$(
@@ -54,5 +54,7 @@ for FILE_INPUT in $FILES; do
 	mkdir -p "$DIR/src/content/documents"
 	cp "/tmp/$FILE_DESTINATION" "$DIR/src/content/documents/$FILE_DESTINATION"
 	rm "/tmp/$FILE_DESTINATION"
+
+	echo 'Done. ---'
 
 done
