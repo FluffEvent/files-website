@@ -57,4 +57,6 @@ for FILE_INPUT in $FILES; do
 	cp "/tmp/$FILE_DESTINATION" "$DIR/src/content/private-documents/$FILE_DESTINATION"
 	rm "/tmp/$FILE_DESTINATION"
 
+	echo 'Done. ---'
+
 done
