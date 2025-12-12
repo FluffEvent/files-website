@@ -309,6 +309,12 @@ const footerText = data.footer || null
 		}
 	}
 
+	:global(code) {
+		@apply bg-gray-100 rounded-sm;
+		@apply px-1.5 py-0.5 text-sm;
+		font-family: 'Noto Sans Mono Variable', Consolas, 'Courier New', monospace;
+	}
+
 	:global(table) {
 		@apply w-full border-collapse;
 
