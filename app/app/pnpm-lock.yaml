@@ -14,6 +14,9 @@ importers:
       '@astrojs/markdoc':
         specifier: ^0.15.8
         version: 0.15.8(astro@5.14.1(@types/node@22.18.8)(jiti@2.6.1)(lightningcss@1.30.1)(rollup@4.46.3)(sass@1.93.2)(typescript@5.9.3)(yaml@2.7.1))
+      '@fontsource-variable/noto-sans-mono':
+        specifier: ^5.2.10
+        version: 5.2.10
       '@fontsource-variable/noto-serif':
         specifier: ^5.2.9
         version: 5.2.9
@@ -309,6 +312,9 @@ packages:
     engines: {node: '>=18'}
     cpu: [x64]
     os: [win32]
+
+  '@fontsource-variable/noto-sans-mono@5.2.10':
+    resolution: {integrity: sha512-N8w7TRt24aD17P4eV9GDNiV4M5FSbeZ91dfWPtlTi5EvH15KAyjGiC7rvXnG3VTo/nb6gQuIXNlTDgH3cz652g==}
 
   '@fontsource-variable/noto-serif@5.2.9':
     resolution: {integrity: sha512-9McZzWeOjD/Gsko+w6A2lpGlHXZw5J2JmxaSMgopiIHoMYI1m6DAyFrzG9QQ0WjdWxj5jZfKM0EGSBVZHC6+nw==}
@@ -2724,6 +2730,8 @@ snapshots:
 
   '@esbuild/win32-x64@0.25.9':
     optional: true
+
+  '@fontsource-variable/noto-sans-mono@5.2.10': {}
 
   '@fontsource-variable/noto-serif@5.2.9': {}
 
