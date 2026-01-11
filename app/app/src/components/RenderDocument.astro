@@ -1,7 +1,7 @@
 ---
+import { i18n as i18nConfig } from '~/config'
 import { site } from '~/site'
 import LocalesPicker from '~/components/LocalesPicker/LocalesPicker.astro'
-
 import logosrc from '~/assets/logo.png?url'
 
 function splitHash(hash: string)
@@ -22,11 +22,11 @@ function splitHash(hash: string)
 
 const data = Astro.props.data || {}
 const version = data.version || site.version || 'dev'
-
+const supportedLocales: string[] = data.supportedLocales || [i18nConfig.defaultLocale]
 const footerText = data.footer || null
 ---
 
-<div class="controls">
+<div class="page-controls">
 
 	<LocalesPicker lang={Astro.currentLocale} />
 
@@ -57,6 +57,19 @@ const footerText = data.footer || null
 		)}
 
 	</div>
+
+</div>
+
+<div class="page-warnings">
+
+	{!supportedLocales.includes(Astro.currentLocale ?? '') && (
+		<div class="unsupported-locale-warning">
+			<span class="icon icon-[mdi--warning-circle] icon-align"></span>
+			<p>
+				<b>Sorry,</b> this document is not available in your language yet.
+			</p>
+		</div>
+	)}
 
 </div>
 
@@ -119,7 +132,7 @@ const footerText = data.footer || null
 <style lang="scss">
 @reference "~/styles/tailwind.css";
 
-.controls {
+.page-controls {
 	@apply flex justify-center items-center gap-4;
 	@apply w-full mt-8;
 
@@ -173,6 +186,23 @@ const footerText = data.footer || null
 			&:active {
 				@apply bg-cyan-800;
 			}
+		}
+	}
+}
+
+.page-warnings {
+	@apply flex justify-center items-center;
+	@apply w-full mt-4 mb-4;
+
+	.unsupported-locale-warning {
+		@apply flex justify-center items-center gap-2;
+		@apply bg-orange-100;
+		@apply px-4 py-2;
+		@apply text-sm text-orange-800 font-semibold;
+		@apply border border-orange-400 rounded-lg;
+
+		.icon {
+			@apply text-xl;
 		}
 	}
 }
