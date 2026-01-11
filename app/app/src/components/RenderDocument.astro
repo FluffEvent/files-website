@@ -60,18 +60,18 @@ const footerText = data.footer || null
 
 </div>
 
-<div class="page-warnings">
+{!supportedLocales.includes(Astro.currentLocale ?? '') && (
+	<div class="page-warnings">
 
-	{!supportedLocales.includes(Astro.currentLocale ?? '') && (
 		<div class="unsupported-locale-warning">
 			<span class="icon icon-[mdi--warning-circle] icon-align"></span>
 			<p>
 				<b>Sorry,</b> this document is not available in your language yet.
 			</p>
 		</div>
-	)}
 
-</div>
+	</div>
+)}
 
 <div class="main">
 
@@ -193,6 +193,10 @@ const footerText = data.footer || null
 .page-warnings {
 	@apply flex justify-center items-center;
 	@apply w-full mt-4 mb-4;
+
+	@media print {
+		@apply hidden;
+	}
 
 	.unsupported-locale-warning {
 		@apply flex justify-center items-center gap-2;
