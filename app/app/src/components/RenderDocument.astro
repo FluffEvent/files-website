@@ -1,5 +1,6 @@
 ---
 import { i18n as i18nConfig } from '~/config'
+import { site } from '~/site'
 import LocalesPicker from '~/components/LocalesPicker/LocalesPicker.astro'
 import logosrc from '~/assets/logo.png?url'
 
@@ -20,7 +21,7 @@ function splitHash(hash: string)
 }
 
 const data = Astro.props.data || {}
-const version = data.version || import.meta.env.GITHUB_SHA || 'dev'
+const version = data.version || site.version || 'dev'
 const supportedLocales: string[] = data.supportedLocales || [i18nConfig.defaultLocale]
 const footerText = data.footer || null
 ---
@@ -39,17 +40,21 @@ const footerText = data.footer || null
 
 	<div class="content-controls">
 
-		<button class="btn" data-content-control="split">
-			Split document in pages
-		</button>
+		{site.version === 'dev' && (
+			<button class="btn" data-content-control="split">
+				Split document in pages
+			</button>
+		)}
 
 		<button class="btn" data-content-control="print">
 			Print
 		</button>
 
-		<button class="btn" data-content-control="reload">
-			Reload page
-		</button>
+		{site.version === 'dev' && (
+			<button class="btn" data-content-control="reload">
+				Reload page
+			</button>
+		)}
 
 	</div>
 
@@ -153,18 +158,24 @@ const footerText = data.footer || null
 			@apply border border-gray-700 rounded-lg;
 			@apply cursor-pointer;
 
-			&:hover {
+			&:disabled {
+				@apply bg-gray-400;
+				@apply border-gray-500;
+				@apply cursor-not-allowed;
+			}
+
+			&:not(:disabled):hover {
 				@apply bg-gray-700;
 			}
 
-			&:active {
+			&:not(:disabled):active {
 				@apply bg-gray-800;
 			}
 		}
 	}
 
 	.content-controls {
-		.btn {
+		.btn:not(:disabled) {
 			@apply bg-cyan-600;
 			@apply border-cyan-700;
 
@@ -627,20 +638,38 @@ document.querySelectorAll('[data-content-control="split"]').forEach((element) =>
 {
 	element.addEventListener('click', () =>
 	{
+		// Split document in pages
 		splitDocument()
 	})
 })
 
-window.addEventListener('beforeprint', () =>
-{
-	splitDocument()
-})
-
 document.querySelectorAll('[data-content-control="print"]').forEach((element) =>
 {
-	element.addEventListener('click', () =>
+	element.addEventListener('click', async (event) =>
 	{
+		const target = event.currentTarget as HTMLElement
+		// Disable the print button to avoid multiple clicks
+		target.setAttribute('disabled', 'true')
+		// Split document in pages before printing
+		splitDocument()
+		// Wait for all images in all content wrappers to load
+		const images: HTMLImageElement[] = Array.from(document.querySelectorAll('.content-wrapper img'))
+		await Promise.all(images.map((img) =>
+		{
+			if (img.complete)
+			{
+				return Promise.resolve()
+			}
+			return new Promise<void>((resolve) =>
+			{
+				img.addEventListener('load', () => resolve())
+				img.addEventListener('error', () => resolve())
+			})
+		}))
+		// Print the document
 		window.print()
+		// Re-enable the print button
+		target.removeAttribute('disabled')
 	})
 })
 
@@ -648,6 +677,7 @@ document.querySelectorAll('[data-content-control="reload"]').forEach((element) =
 {
 	element.addEventListener('click', () =>
 	{
+		// Reload the page
 		location.reload()
 	})
 })
