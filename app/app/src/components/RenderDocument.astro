@@ -60,18 +60,18 @@ const footerText = data.footer || null
 
 </div>
 
-<div class="page-warnings">
+{!supportedLocales.includes(Astro.currentLocale ?? '') && (
+	<div class="page-warnings">
 
-	{!supportedLocales.includes(Astro.currentLocale ?? '') && (
 		<div class="unsupported-locale-warning">
 			<span class="icon icon-[mdi--warning-circle] icon-align"></span>
 			<p>
 				<b>Sorry,</b> this document is not available in your language yet.
 			</p>
 		</div>
-	)}
 
-</div>
+	</div>
+)}
 
 <div class="main">
 
