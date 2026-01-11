@@ -145,18 +145,24 @@ const footerText = data.footer || null
 			@apply border border-gray-700 rounded-lg;
 			@apply cursor-pointer;
 
-			&:hover {
+			&:disabled {
+				@apply bg-gray-400;
+				@apply border-gray-500;
+				@apply cursor-not-allowed;
+			}
+
+			&:not(:disabled):hover {
 				@apply bg-gray-700;
 			}
 
-			&:active {
+			&:not(:disabled):active {
 				@apply bg-gray-800;
 			}
 		}
 	}
 
 	.content-controls {
-		.btn {
+		.btn:not(:disabled) {
 			@apply bg-cyan-600;
 			@apply border-cyan-700;
 
