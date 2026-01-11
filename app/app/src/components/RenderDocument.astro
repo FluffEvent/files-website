@@ -40,17 +40,21 @@ const footerText = data.footer || null
 
 	<div class="content-controls">
 
-		<button class="btn" data-content-control="split">
-			Split document in pages
-		</button>
+		{site.version === 'dev' && (
+			<button class="btn" data-content-control="split">
+				Split document in pages
+			</button>
+		)}
 
 		<button class="btn" data-content-control="print">
 			Print
 		</button>
 
-		<button class="btn" data-content-control="reload">
-			Reload page
-		</button>
+		{site.version === 'dev' && (
+			<button class="btn" data-content-control="reload">
+				Reload page
+			</button>
+		)}
 
 	</div>
 
