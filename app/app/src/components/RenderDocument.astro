@@ -612,16 +612,33 @@ document.querySelectorAll('[data-content-control="split"]').forEach((element) =>
 	})
 })
 
-window.addEventListener('beforeprint', () =>
-{
-	splitDocument()
-})
-
 document.querySelectorAll('[data-content-control="print"]').forEach((element) =>
 {
-	element.addEventListener('click', () =>
+	element.addEventListener('click', async (event) =>
 	{
+		const target = event.currentTarget as HTMLElement
+		// Disable the print button to avoid multiple clicks
+		target.setAttribute('disabled', 'true')
+		// Split document in pages before printing
+		splitDocument()
+		// Wait for all images in all content wrappers to load
+		const images: HTMLImageElement[] = Array.from(document.querySelectorAll('.content-wrapper img'))
+		await Promise.all(images.map((img) =>
+		{
+			if (img.complete)
+			{
+				return Promise.resolve()
+			}
+			return new Promise<void>((resolve) =>
+			{
+				img.addEventListener('load', () => resolve())
+				img.addEventListener('error', () => resolve())
+			})
+		}))
+		// Print the document
 		window.print()
+		// Re-enable the print button
+		target.removeAttribute('disabled')
 	})
 })
 
