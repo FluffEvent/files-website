@@ -1,4 +1,5 @@
 ---
+import { site } from '~/site'
 import LocalesPicker from '~/components/LocalesPicker/LocalesPicker.astro'
 
 import logosrc from '~/assets/logo.png?url'
@@ -20,7 +21,7 @@ function splitHash(hash: string)
 }
 
 const data = Astro.props.data || {}
-const version = data.version || import.meta.env.GITHUB_SHA || 'dev'
+const version = data.version || site.version || 'dev'
 
 const footerText = data.footer || null
 ---
