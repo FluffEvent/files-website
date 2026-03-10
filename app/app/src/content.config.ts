@@ -6,12 +6,14 @@ export const collections = {
 		loader: glob({ pattern: '**/*.(md|mdoc)', base: './src/content/documents' }),
 		schema: z.object({
 			version: z.string().optional(),
+			showHeader: z.boolean().optional(),
 		}),
 	}),
 	'private-documents': defineCollection({
 		loader: glob({ pattern: '**/*.(md|mdoc)', base: './src/content/private-documents' }),
 		schema: z.object({
 			version: z.string().optional(),
+			showHeader: z.boolean().optional(),
 		}),
 	}),
 }

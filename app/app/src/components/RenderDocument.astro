@@ -22,6 +22,7 @@ function splitHash(hash: string)
 
 const data = Astro.props.data || {}
 const version = data.version || site.version || 'dev'
+const showHeader = data.showHeader !== undefined ? data.showHeader : true
 const supportedLocales: string[] = data.supportedLocales || [i18nConfig.defaultLocale]
 const footerText = data.footer || null
 ---
@@ -79,17 +80,19 @@ const footerText = data.footer || null
 
 	<div class="content-wrapper">
 
-		<div class="content-header">
-			<!-- <div class="side">
-				&nbsp;
-			</div> -->
-			<img src={logosrc} alt="FluffEvent logo" />
-			<div class="overlay">
-				<p class="version">
-					<Fragment set:html={splitHash(version).join('<br />')} />
-				</p>
+		{showHeader && (
+			<div class="content-header">
+				<!-- <div class="side">
+					&nbsp;
+				</div> -->
+				<img src={logosrc} alt="FluffEvent logo" />
+				<div class="overlay">
+					<p class="version">
+						<Fragment set:html={splitHash(version).join('<br />')} />
+					</p>
+				</div>
 			</div>
-		</div>
+		)}
 
 		{version === 'dev' && (
 			<div class="content-watermark">
