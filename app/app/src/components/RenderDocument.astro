@@ -341,9 +341,16 @@ const footerText = data.footer || null
 
 	:global(hr) {
 		@apply mx-0 my-8 border-t border-gray-300;
-		@apply break-after-page;
 
-		@media print {
+		&:global(:not(.no-break)) {
+			@apply break-after-page;
+
+			@media print {
+				@apply m-0 border-0;
+			}
+		}
+
+		&:global(:first-child), &:global(:last-child) {
 			@apply m-0 border-0;
 		}
 	}
@@ -495,7 +502,7 @@ function splitDocument()
 	{
 		let element = contentElements[elementIndex]!
 
-		if (element.tagName === 'HR')
+		if (element.tagName === 'HR' && !element.classList.contains('no-break'))
 		{
 			// Start new page, as always on hr elements
 			pages.push([])
