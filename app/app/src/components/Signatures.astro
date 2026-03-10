@@ -1,0 +1,56 @@
+---
+interface DataItem
+{
+	title: string,
+	signature_top_margin?: number,
+	signature_placeholder?: string,
+}
+
+export interface Props
+{
+	data: Array<DataItem>
+}
+---
+
+<table>
+	<thead>
+		<tr>
+			{Astro.props.data.map((item: DataItem) => (
+				<th align="left">
+					{item.title}
+				</th>
+			))}
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			{Astro.props.data.map((item: DataItem) => (
+				<td align="left">
+					<div
+						class="signature"
+						style={item.signature_top_margin ? `margin-top: ${item.signature_top_margin}` : undefined}
+					>
+						<span class="faded-text">
+							{item.signature_placeholder || 'Signature'}
+						</span>
+					</div>
+				</td>
+			))}
+		</tr>
+		<tr>
+			{Astro.props.data.map((item: DataItem) => (
+				<td align="left">
+					Fait le : <span class="input-line"></span><span class="input-line input-line-next"></span>
+				</td>
+			))}
+		</tr>
+	</tbody>
+</table>
+
+<style lang="scss">
+table {
+	width: 100%;
+	border-collapse: collapse;
+	table-layout: fixed; // Equal column widths
+}
+</style>
