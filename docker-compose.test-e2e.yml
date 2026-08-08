@@ -1,5 +1,7 @@
 # Services overrides for testing
 
+name: fluffevent-files-website-test-e2e
+
 x-common:
 
   app-test-environment: &app-test-environment
