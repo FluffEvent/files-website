@@ -101,8 +101,8 @@ jobs:
 
       - name: Download FluffEvent association documents
         run: |
-          # download-documents.sh ./app/app
-          sh ./cicd/download-documents.sh ./app/app
+          # download-documents.sh ./app
+          sh ./cicd/download-documents.sh ./app
 
       - name: Pull dependencies
         run: |
