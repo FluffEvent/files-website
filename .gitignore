@@ -47,15 +47,14 @@ playwright-report/
 playwright/.cache/
 test-results/
 
-# Application environment files
-*/**/.env*
+# -- Service rules:
+
+# All services
+/*/data/
+/*/**/.env*
 
 # Application content
 /app/app/src/content/documents/**/*
 !/app/app/src/content/documents/.gitkeep
 /app/app/src/content/private-documents/**/*
 !/app/app/src/content/private-documents/.gitkeep
-
-# -- Specific to gitignore:
-
-# N/A
