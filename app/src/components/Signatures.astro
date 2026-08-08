@@ -38,7 +38,7 @@ export interface Props
 			))}
 		</tr>
 		<tr>
-			{Astro.props.data.map((item: DataItem) => (
+			{Astro.props.data.map((_item: DataItem) => (
 				<td align="left">
 					Fait le : <span class="input-line"></span><span class="input-line input-line-next"></span>
 				</td>
